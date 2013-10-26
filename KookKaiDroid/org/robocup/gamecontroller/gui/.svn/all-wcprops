@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svnroot/robocupgc/!svn/ver/160/trunk/src/org/robocup/gamecontroller/gui
+END
+DoubleLineBorder.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svnroot/robocupgc/!svn/ver/154/trunk/src/org/robocup/gamecontroller/gui/DoubleLineBorder.java
+END
+GuiHandler.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svnroot/robocupgc/!svn/ver/154/trunk/src/org/robocup/gamecontroller/gui/GuiHandler.java
+END
+TimeTextField.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svnroot/robocupgc/!svn/ver/154/trunk/src/org/robocup/gamecontroller/gui/TimeTextField.java
+END
+PlayerButton.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svnroot/robocupgc/!svn/ver/154/trunk/src/org/robocup/gamecontroller/gui/PlayerButton.java
+END
+MainGUI.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/robocupgc/!svn/ver/160/trunk/src/org/robocup/gamecontroller/gui/MainGUI.java
+END
+GameStateAdapter.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svnroot/robocupgc/!svn/ver/154/trunk/src/org/robocup/gamecontroller/gui/GameStateAdapter.java
+END
+DropInAdapter.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svnroot/robocupgc/!svn/ver/154/trunk/src/org/robocup/gamecontroller/gui/DropInAdapter.java
+END
+KickOffAdapter.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svnroot/robocupgc/!svn/ver/154/trunk/src/org/robocup/gamecontroller/gui/KickOffAdapter.java
+END
+PenaltyAdapter.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svnroot/robocupgc/!svn/ver/154/trunk/src/org/robocup/gamecontroller/gui/PenaltyAdapter.java
+END
+PlayerAdapter.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svnroot/robocupgc/!svn/ver/154/trunk/src/org/robocup/gamecontroller/gui/PlayerAdapter.java
+END
+NamedComboBoxModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svnroot/robocupgc/!svn/ver/154/trunk/src/org/robocup/gamecontroller/gui/NamedComboBoxModel.java
+END
+PushingCounterAdapter.java
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svnroot/robocupgc/!svn/ver/154/trunk/src/org/robocup/gamecontroller/gui/PushingCounterAdapter.java
+END

@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/robocupgc/!svn/ver/158/trunk/src/org/robocup/gamecontroller/rules
+END
+HumanoidLeagueAdultSizeRuleBook.java
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svnroot/robocupgc/!svn/ver/154/trunk/src/org/robocup/gamecontroller/rules/HumanoidLeagueAdultSizeRuleBook.java
+END
+HumanoidLeagueTeenSizeRuleBook.java
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svnroot/robocupgc/!svn/ver/154/trunk/src/org/robocup/gamecontroller/rules/HumanoidLeagueTeenSizeRuleBook.java
+END
+StandardPlatformLeagueRuleBook.java
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svnroot/robocupgc/!svn/ver/154/trunk/src/org/robocup/gamecontroller/rules/StandardPlatformLeagueRuleBook.java
+END
+HumanoidLeagueKidSizeRuleBook.java
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svnroot/robocupgc/!svn/ver/154/trunk/src/org/robocup/gamecontroller/rules/HumanoidLeagueKidSizeRuleBook.java
+END
