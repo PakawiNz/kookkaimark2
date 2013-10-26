@@ -40,9 +40,10 @@ public class CameraInterface extends SurfaceView implements SurfaceHolder.Callba
 		mCamera = Camera.open();
 		Camera.Parameters para = mCamera.getParameters();
 		this.previewformat = para.getPreviewFormat();
-		//System.out.println("PreviewFormat" + para.getPreviewFormat());
 
-		para.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_FLUORESCENT);
+		para.setAutoExposureLock(true);
+		para.setAutoWhiteBalanceLock(true);		
+		para.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_DAYLIGHT);
 
 		Size s = para.getPreviewSize();
 		
