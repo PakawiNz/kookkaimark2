@@ -1,10 +1,5 @@
 package ivy.kookkai;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-
 import ivy.kookkai.data.GlobalVar;
 import ivy.kookkai.debugview.CameraInterface;
 import ivy.kookkai.debugview.DebugImgView;
@@ -180,8 +175,8 @@ public class KookKaiDroidActivity extends Activity implements
 
 		debugText = (TextView) findViewById(R.id.debugText);
 
-		rootHorizontalLayout.addView(leftVerticalLayout);
 		rootHorizontalLayout.addView(rightVerticalLayout);
+		rootHorizontalLayout.addView(leftVerticalLayout);
 		
 		headingText = (TextView) findViewById(R.id.headingText);
 		

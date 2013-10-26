@@ -1,7 +1,5 @@
 package ivy.kookkai.api;
 
-import ivy.kookkai.MainlLoop;
-import ivy.kookkai.ai.FetchBall;
 import ivy.kookkai.data.GlobalVar;
 import ivy.kookkai.localization.Humanoid;
 

@@ -1,9 +1,7 @@
 package ivy.kookkai;
 
 import ivy.kookkai.ai.AITemplate;
-import ivy.kookkai.ai.FetchBall;
-import ivy.kookkai.ai.GoalKeeper;
-import ivy.kookkai.ai.PakawiNZ;
+import ivy.kookkai.ai.PakawiNz_AI;
 import ivy.kookkai.api.KookKaiAndroidAPI;
 import ivy.kookkai.data.GlobalVar;
 import ivy.kookkai.debugview.CameraInterface;
@@ -78,12 +76,9 @@ public class MainlLoop implements Runnable {
 		outMessage = new MessageBundle();
 		inboxMessage = new MessageBundle();
 		robotAPI = new KookKaiAndroidAPI(4567);
-		if(GlobalVar.KOOKKAI_MARK==4){
-			ai = new GoalKeeper(robotAPI);
-		}
-		else{
-			ai = new FetchBall(robotAPI);
-		}
+		
+		ai = new PakawiNz_AI(robotAPI);
+		
 //		ai = new Runner();
 		visionBlob = new Blob();
 		mapBlob = new MapBlob();

@@ -1,60 +1,69 @@
 package kookkai.strategy;
 
-import com.example.udpfootballer.KookKaiStateAndAction;
-
-import ivy.kookkai.ai.FetchBall;
+import ivy.kookkai.ai.PakawiNz_AI;
 import ivy.kookkai.api.KookKaiAndroidAPI;
 import ivy.kookkai.data.GlobalVar;
 
 public class ChampStateFull implements StrategyTemplate{
 	KookKaiAndroidAPI api;
-	FetchBall fetchBall;
+	PakawiNz_AI ai;
 
-	private final int LEFTBALL = (int)(GlobalVar.FRAME_WIDTH * (1.0/4.0));
-	private final int RIGHTBALL = GlobalVar.FRAME_WIDTH - LEFTBALL;
-	private final int LEFTGOAL = (int)(GlobalVar.FRAME_WIDTH * (1.0/4.0));
-	private final int RIGHTGOAL = GlobalVar.FRAME_WIDTH - LEFTGOAL;
-	
+	long timeLeft = 0;
 	long lastTime = 0;
 
-	private boolean lock(int ms){
-		if(System.currentTimeMillis() - lastTime < ms) {
+	private boolean lock(){
+		timeLeft -= System.currentTimeMillis() - lastTime;
+		if(timeLeft < 0) {
 			return false;
 		} else{
 			lastTime = System.currentTimeMillis();
 			return true;
 		}
 	}
-	
-	public ChampStateFull(FetchBall fetchBall) {
-		this.fetchBall = fetchBall;
-		this.api = fetchBall.api;
+
+	private void lock(int ms){
+		lastTime = System.currentTimeMillis();
+		timeLeft = ms;
+	}
+
+	public ChampStateFull(PakawiNz_AI ai) {
+		this.ai = ai;
+		this.api = ai.api;
 	}
 	public String run() {			//ball pos :: 0 X : 1 Y : 2 SIZE;
-		if(!lock(300)){
-			if(GlobalVar.ballPos[0] < LEFTBALL){
-				api.walkingNonLimit(0, 10, -200);
-			}else if(GlobalVar.ballPos[0] > RIGHTBALL){
-				api.walkingNonLimit(0, 10, 200);
-			}else if (GlobalVar.ballPos[2] > 0) {
-				if(GlobalVar.goalPos[0] > LEFTGOAL){
-					api.walkingNonLimit(-10, 0, -100);
-				}else if(GlobalVar.goalPos[0] < RIGHTGOAL){
-					api.walkingNonLimit(10, 0, 100);
+		ai.updateCurrentState();
+		if(lock()) return "LOCK";
+
+		if(GlobalVar.ballPos[2] > 0){
+			if(GlobalVar.ballPos[1] < 100){
+				int readyToKick = ai.prepareKick();
+				if(readyToKick == 1){
+					ai.kickBall();
+					lock(2000);
+				}else if(readyToKick == -1){
+					ai.changeDirection();
+					lock(10000);
 				}else {
-					if(GlobalVar.isGoalDirection())
-						api.walkingNonLimit(0, 40, 0);	
+					lock(300);
 				}
+			}else {
+				ai.trackBall();
+				lock(100);
 			}
-		}
-		
-		if (fetchBall.isStartFalling()) {
-			fetchBall.startGettingUp();
 		} else {
-			fetchBall.resetFallCounter();
+			ai.findBall();
+			lock(100);
 		}
+
+
+		if (ai.isStartFalling()) {
+			ai.startGettingUp();
+		} else {
+			ai.resetFallCounter();
+		}
+
 		return "HOLY SHIT!!!";
-		
+
 	}
 
 }

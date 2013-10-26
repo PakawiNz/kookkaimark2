@@ -1,6 +1,5 @@
 package ivy.kookkai.data;
 
-import ivy.kookkai.ai.FetchBall;
 import ivy.kookkai.refbox.Constants;
 import ivy.kookkai.refbox.GameData;
 import ivy.kookkai.refbox.KookKaiTeamInfo;
@@ -18,9 +17,9 @@ import android.os.Environment;
 import android.util.Log;
 
 public final class GlobalVar {
-	public static final int KOOKKAI_MARK = 2;
+	public static final int KOOKKAI_MARK = 3;
 	public static float GOAL_DIRECTION = (float) (-1.3);// range from -PI
-	
+
 	public static ArrayList<ColorPlate> colorList = new ArrayList<ColorPlate>();
 	public static ArrayList<BlobObject> blobResult;
 	public static ArrayList<BlobObject> mergeResult;
@@ -38,7 +37,7 @@ public final class GlobalVar {
 	public final static int CYAN_BLOB = 13;
 	public final static int MAGENTA_BLOB = 14;
 	public static int oppTeamColor = MAGENTA_BLOB;
-	
+
 	public static int myTeamNumber = 0;
 	public static String comIP = "192.168.1.107";
 	public static String twinIP = "192.168.1.123";
@@ -48,7 +47,7 @@ public final class GlobalVar {
 	public final static int FRAME_HEIGHT = 640;
 	public final static int FRAME_WIDTH = 480;
 	public final static int REMAP_FACTOR = 8;// TODO find out why data of homo_8
-												// is incorrect
+	// is incorrect
 
 	public static double cameraFocalLength = 20;
 	public static byte[][] crcbHashMap = new byte[256][256];
@@ -62,7 +61,7 @@ public final class GlobalVar {
 	public static double enemyPos[] = new double[4];
 
 	public static float heading = 0;// range from -PI to PI
-																// to PI!!
+	// to PI!!
 	public static final float HEADING_ERROR_RANGE = (float) Math.PI * 4 / 8;
 	// Accelerometer alignment at Homography calculation
 	// TODO need precise recalibration with measurement
@@ -140,133 +139,158 @@ public final class GlobalVar {
 		createColorHashMap();
 
 	}
-	
-	public static boolean committeeAllowMeToPlay(FetchBall fetcher) {
+
+	public static boolean committeeAllowMeToPlay() {
 		if (GlobalVar.gameData.teams[0].teamNumber == 25) {
-			//teaminfo = GlobalVar.gameData.teams[0];
+			// teaminfo = GlobalVar.gameData.teams[0];
 			KookKaiTeamInfo.getInstance().setTeamInfo(0);
 		} else {
-		//teaminfo = GlobalVar.gameData.teams[1];
-		KookKaiTeamInfo.getInstance().setTeamInfo(1);
+			// teaminfo = GlobalVar.gameData.teams[1];
+			KookKaiTeamInfo.getInstance().setTeamInfo(1);
 		}
-		
+
 		// calculate deference between accelerometer value that we expect and
 		// actual one.
-	
-	
-		//Checking KickOff
-		//Team[0] We are Cyan
-		if((KookKaiTeamInfo.getInstance().getTeamInfo()==GlobalVar.gameData.teams[0])){
-				//Check KickOff by Cyan //We're starting
-		if(GlobalVar.gameData.kickOffTeam==0){
-		 // if game state is not playing so robot must stand still.
-			if(GlobalVar.gameData.state == Constants.STATE_INITIAL ||GlobalVar.gameData.state == Constants.STATE_SET ||GlobalVar.gameData.state == Constants.STATE_FINISHED  ){
-				 
-				Log.d("WTF","tate Stop");
-				return false;
-			}
-			//READY:Change by following KickOff 
-			else if(GlobalVar.gameData.state == Constants.STATE_READY){
-				if(GlobalVar.myTeamNumber==0){ Log.d("WTF","State Ready"); return false; }
-				if(GlobalVar.myTeamNumber==1){fetcher.walkToSetupPosition();}
-				if(GlobalVar.myTeamNumber==2){ fetcher.walkToSetupPosition();}
-				}
-			else if(GlobalVar.gameData.state == Constants.STATE_PLAYING ) {
-				if (KookKaiTeamInfo.getInstance().getTeamInfo().player[GlobalVar.myTeamNumber].penalty != Constants.PENALTY_NONE) {
-					Log.d("WTF","State Stop");
-					return false;
-				
-				}
-			 	else{
-			 	
-			 		Log.d("WTF","State Playing");
-			 		return true;
-			 	}
-			}
-		}
-		//Check KickOff by Magenta  //We're waiting
-		else if(GlobalVar.gameData.kickOffTeam==1){
-			 // if game state is not playing so robot must stand still.
-				if(GlobalVar.gameData.state == Constants.STATE_INITIAL ||GlobalVar.gameData.state == Constants.STATE_SET ||GlobalVar.gameData.state == Constants.STATE_FINISHED  ){
-					 
-					Log.d("WTF","State Stop");
+
+		// Checking KickOff
+		// Team[0] We are Cyan
+		if ((KookKaiTeamInfo.getInstance().getTeamInfo() == GlobalVar.gameData.teams[0])) {
+			// Check KickOff by Cyan //We're starting
+			if (GlobalVar.gameData.kickOffTeam == 0) {
+				// if game state is not playing so robot must stand still.
+				if (GlobalVar.gameData.state == Constants.STATE_INITIAL
+						|| GlobalVar.gameData.state == Constants.STATE_SET
+						|| GlobalVar.gameData.state == Constants.STATE_FINISHED) {
+
+					Log.d("WTF", "tate Stop");
 					return false;
 				}
-				//READY:Change by following KickOff 
-				else if(GlobalVar.gameData.state == Constants.STATE_READY){
-					if(GlobalVar.myTeamNumber==0){ Log.d("WTF","State Ready"); return false;}
-					if(GlobalVar.myTeamNumber==1){fetcher.walkToSetupPosition();}
-					if(GlobalVar.myTeamNumber==2){ fetcher.walkToSetupPosition();}
-					}
-				else if(GlobalVar.gameData.state == Constants.STATE_PLAYING ) {
-					if (KookKaiTeamInfo.getInstance().getTeamInfo().player[GlobalVar.myTeamNumber].penalty != Constants.PENALTY_NONE) {
-						Log.d("WTF","State Stop");
-						return false;
-					
-					}
-				 	else{
-				 	
-				 		Log.d("WTF","State Playing");
-				 		return true;
-				 	}
-				}
-			}		
-		}
-		//Team[1] //We're Magenta
-		else if((KookKaiTeamInfo.getInstance().getTeamInfo()==GlobalVar.gameData.teams[1])){
-			//Check KickOff by Cyan//We're waiting
-			if(GlobalVar.gameData.kickOffTeam==0){
-				 // if game state is not playing so robot must stand still.
-				if(GlobalVar.gameData.state == Constants.STATE_INITIAL ||GlobalVar.gameData.state == Constants.STATE_SET ||GlobalVar.gameData.state == Constants.STATE_FINISHED  ){
-					 
-					Log.d("WTF","tate Stop");
-					return false;
-				}
-				//READY:Change by following KickOff 
-				else if(GlobalVar.gameData.state == Constants.STATE_READY){
-					if(GlobalVar.myTeamNumber==0){ Log.d("WTF","State Ready"); return false;}
-					if(GlobalVar.myTeamNumber==1){fetcher.walkToSetupPosition();}
-					if(GlobalVar.myTeamNumber==2){ fetcher.walkToSetupPosition();}
-					}
-				else if(GlobalVar.gameData.state == Constants.STATE_PLAYING ) {
-					if (KookKaiTeamInfo.getInstance().getTeamInfo().player[GlobalVar.myTeamNumber].penalty != Constants.PENALTY_NONE) {
-						Log.d("WTF","State Stop");
-						return  false;
-					
-					}
-				 	else{
-				 	
-				 		Log.d("WTF","State Playing");
-				 		return true;
-				 	}
-				}			}
-				//Check KickOff by Magenta //We're starting
-				else if(GlobalVar.gameData.kickOffTeam==1){
-					 // if game state is not playing so robot must stand still.
-					if(GlobalVar.gameData.state == Constants.STATE_INITIAL ||GlobalVar.gameData.state == Constants.STATE_SET ||GlobalVar.gameData.state == Constants.STATE_FINISHED  ){
-						 
-						Log.d("WTF","State Stop");
+				// READY:Change by following KickOff
+				else if (GlobalVar.gameData.state == Constants.STATE_READY) {
+					if (GlobalVar.myTeamNumber == 0) {
+						Log.d("WTF", "State Ready");
 						return false;
 					}
-					//READY:Change by following KickOff 
-					else if(GlobalVar.gameData.state == Constants.STATE_READY){
-						if(GlobalVar.myTeamNumber==0){ Log.d("WTF","State Ready");return false; }
-						if(GlobalVar.myTeamNumber==1){fetcher.walkToSetupPosition();}
-						if(GlobalVar.myTeamNumber==2){ fetcher.walkToSetupPosition();}
-						}
-					else if(GlobalVar.gameData.state == Constants.STATE_PLAYING ) {
-						if (KookKaiTeamInfo.getInstance().getTeamInfo().player[GlobalVar.myTeamNumber].penalty != Constants.PENALTY_NONE) {
-							Log.d("WTF","State Stop");
-							return false;
-						
-						}
-					 	else{
-					 	
-					 		Log.d("WTF","State Playing");
-					 		return true;
-					 	}
-					}				}			
+					// if(GlobalVar.myTeamNumber==1){ai.walkToSetupPosition();}
+					// if(GlobalVar.myTeamNumber==2){ ai.walkToSetupPosition();}
+				} else if (GlobalVar.gameData.state == Constants.STATE_PLAYING) {
+					if (KookKaiTeamInfo.getInstance().getTeamInfo().player[GlobalVar.myTeamNumber].penalty != Constants.PENALTY_NONE) {
+						Log.d("WTF", "State Stop");
+						return false;
+
+					} else {
+
+						Log.d("WTF", "State Playing");
+						return true;
+					}
+				}
 			}
+			// Check KickOff by Magenta //We're waiting
+			else if (GlobalVar.gameData.kickOffTeam == 1) {
+				// if game state is not playing so robot must stand still.
+				if (GlobalVar.gameData.state == Constants.STATE_INITIAL
+						|| GlobalVar.gameData.state == Constants.STATE_SET
+						|| GlobalVar.gameData.state == Constants.STATE_FINISHED) {
+
+					Log.d("WTF", "State Stop");
+					return false;
+				}
+				// READY:Change by following KickOff
+				else if (GlobalVar.gameData.state == Constants.STATE_READY) {
+					if (GlobalVar.myTeamNumber == 0) {
+						Log.d("WTF", "State Ready");
+						return false;
+					}
+					if (GlobalVar.myTeamNumber == 1) {
+						//ai.walkToSetupPosition();
+					}
+					if (GlobalVar.myTeamNumber == 2) {
+						//ai.walkToSetupPosition();
+					}
+				} else if (GlobalVar.gameData.state == Constants.STATE_PLAYING) {
+					if (KookKaiTeamInfo.getInstance().getTeamInfo().player[GlobalVar.myTeamNumber].penalty != Constants.PENALTY_NONE) {
+						Log.d("WTF", "State Stop");
+						return false;
+
+					} else {
+
+						Log.d("WTF", "State Playing");
+						return true;
+					}
+				}
+			}
+		}
+		// Team[1] //We're Magenta
+		else if ((KookKaiTeamInfo.getInstance().getTeamInfo() == GlobalVar.gameData.teams[1])) {
+			// Check KickOff by Cyan//We're waiting
+			if (GlobalVar.gameData.kickOffTeam == 0) {
+				// if game state is not playing so robot must stand still.
+				if (GlobalVar.gameData.state == Constants.STATE_INITIAL
+						|| GlobalVar.gameData.state == Constants.STATE_SET
+						|| GlobalVar.gameData.state == Constants.STATE_FINISHED) {
+
+					Log.d("WTF", "tate Stop");
+					return false;
+				}
+				// READY:Change by following KickOff
+				else if (GlobalVar.gameData.state == Constants.STATE_READY) {
+					if (GlobalVar.myTeamNumber == 0) {
+						Log.d("WTF", "State Ready");
+						return false;
+					}
+					if (GlobalVar.myTeamNumber == 1) {
+						//ai.walkToSetupPosition();
+					}
+					if (GlobalVar.myTeamNumber == 2) {
+						//ai.walkToSetupPosition();
+					}
+				} else if (GlobalVar.gameData.state == Constants.STATE_PLAYING) {
+					if (KookKaiTeamInfo.getInstance().getTeamInfo().player[GlobalVar.myTeamNumber].penalty != Constants.PENALTY_NONE) {
+						Log.d("WTF", "State Stop");
+						return false;
+
+					} else {
+
+						Log.d("WTF", "State Playing");
+						return true;
+					}
+				}
+			}
+			// Check KickOff by Magenta //We're starting
+			else if (GlobalVar.gameData.kickOffTeam == 1) {
+				// if game state is not playing so robot must stand still.
+				if (GlobalVar.gameData.state == Constants.STATE_INITIAL
+						|| GlobalVar.gameData.state == Constants.STATE_SET
+						|| GlobalVar.gameData.state == Constants.STATE_FINISHED) {
+
+					Log.d("WTF", "State Stop");
+					return false;
+				}
+				// READY:Change by following KickOff
+				else if (GlobalVar.gameData.state == Constants.STATE_READY) {
+					if (GlobalVar.myTeamNumber == 0) {
+						Log.d("WTF", "State Ready");
+						return false;
+					}
+					if (GlobalVar.myTeamNumber == 1) {
+						//ai.walkToSetupPosition();
+					}
+					if (GlobalVar.myTeamNumber == 2) {
+						//ai.walkToSetupPosition();
+					}
+				} else if (GlobalVar.gameData.state == Constants.STATE_PLAYING) {
+					if (KookKaiTeamInfo.getInstance().getTeamInfo().player[GlobalVar.myTeamNumber].penalty != Constants.PENALTY_NONE) {
+						Log.d("WTF", "State Stop");
+						return false;
+
+					} else {
+
+						Log.d("WTF", "State Playing");
+						return true;
+					}
+				}
+			}
+		}
 		return true;
 	}
 
