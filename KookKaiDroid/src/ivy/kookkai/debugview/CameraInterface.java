@@ -42,8 +42,8 @@ public class CameraInterface extends SurfaceView implements SurfaceHolder.Callba
 		this.previewformat = para.getPreviewFormat();
 		
 		
-		para.setAutoExposureLock(true);
-		para.setAutoWhiteBalanceLock(true);		
+//		para.setAutoExposureLock(true);
+//		para.setAutoWhiteBalanceLock(true);		
 		para.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_DAYLIGHT);
 
 		Size s = para.getPreviewSize();

@@ -5,7 +5,7 @@ import ivy.kookkai.data.GlobalVar;
 import ivy.kookkai.vision.BlobObject;
 
 public class MapBlob {
-	public static final int KEEP_BALL_POSTION_PERIOD = 30;// unit: loop(s)
+	public static final int KEEP_BALL_POSTION_PERIOD = 10;// unit: loop(s)
 	private int mLastLoopSeen = 0;
 	private double[] mLastBallStat = new double[4];
 	private double[] mLastGoalStat = new double[4];

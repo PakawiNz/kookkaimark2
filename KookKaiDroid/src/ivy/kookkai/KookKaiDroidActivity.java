@@ -175,8 +175,9 @@ public class KookKaiDroidActivity extends Activity implements
 
 		debugText = (TextView) findViewById(R.id.debugText);
 
-		rootHorizontalLayout.addView(rightVerticalLayout);
+		//TODO: SWAP HERE TO USE WITH ACER
 		rootHorizontalLayout.addView(leftVerticalLayout);
+		rootHorizontalLayout.addView(rightVerticalLayout);
 		
 		headingText = (TextView) findViewById(R.id.headingText);
 		

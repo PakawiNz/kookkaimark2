@@ -1,12 +1,13 @@
 package ivy.kookkai.ai;
 
+import android.util.Log;
 import kookkai.strategy.ChampStateFull;
 import kookkai.strategy.StrategyTemplate;
 import ivy.kookkai.ai.AITemplate;
 import ivy.kookkai.api.KookKaiAndroidAPI;
 import ivy.kookkai.data.GlobalVar;
 
-public class PakawiNz_AI implements AITemplate {
+public class PakawiNz_AI extends FetchBall implements AITemplate {
 	private int state = 0;
 	
 	private double falldownThreashold = 150.0;
@@ -25,6 +26,7 @@ public class PakawiNz_AI implements AITemplate {
 	private String out = "";
 	
 	public PakawiNz_AI(KookKaiAndroidAPI api) {
+		super(api);
 		this.api = api;
 		this.strategy = new ChampStateFull(this);
 	}
@@ -34,7 +36,7 @@ public class PakawiNz_AI implements AITemplate {
 	private final int BallX_CENTER = 0;
 	private final int BallX_TRESH = 50;
 	private final int GoalX_CENTER = 0;
-	private final int GoalX_TRESH = 20;
+	private final int GoalX_TRESH = 35;
 	
 	private final int onLEFT = -1;
 	private final int onCENTER = 0;
@@ -65,26 +67,45 @@ public class PakawiNz_AI implements AITemplate {
 		
 	}
 	
+	public void updateFineBallState(){
+		
+//		if(GlobalVar.ballPos[0] - BallX_CENTER < -2){
+//			ballState = onLEFT;
+//		}else if(GlobalVar.ballPos[0] - BallX_CENTER > 15){
+//			ballState = onRIGHT;
+//		}else {
+//			ballState = onCENTER;
+//		}
+		
+		if(GlobalVar.ballPos[0] - BallX_CENTER < -20){
+			ballState = onLEFT;
+		}else if(GlobalVar.ballPos[0] - BallX_CENTER > 20){
+			ballState = onRIGHT;
+		}else {
+			ballState = onCENTER;
+		}
+	}
+	
 	//-------------------------------->> WALKING HANDLING <<--------------------------------//
 	
 	private void alignLeft(){
 		out += "ALIGN LEFT\n";
-		api.walkingNonLimit(10, 0, -50);
+		api.walkingNonLimit(-10, 0, 50);
 	}
 
 	private void alignRight(){
 		out += "ALIGN RIGHT\n";
-		api.walkingNonLimit(-10, 0, 50);
+		api.walkingNonLimit(10, 0, -50);
 	}
 
 	private void rotateLeft(){
 		out += "ROTATE LEFT\n";
-		api.walkingNonLimit(0, 0, -100);
+		api.walkingNonLimit(0, 0, -80);
 	}
 
 	private void rotateRight(){
 		out += "ROTATE RIGHT\n";
-		api.walkingNonLimit(0, 0, 100);
+		api.walkingNonLimit(0, 0, 80);
 	}
 	
 	private void folllowLeft(){
@@ -97,13 +118,23 @@ public class PakawiNz_AI implements AITemplate {
 		api.walkingNonLimit(-5, 30, 0);
 	}
 	
-	private void goStraight(){
-		out += "GO STRAIGHT\n";
-		api.walkingNonLimit(0, 30, 0);
+	private void slideLeft(){
+		out += "SLIDE LEFT\n";
+		api.walkingNonLimit(10, 0, 0);
+	}
+
+	private void slideRight(){
+		out += "SLIDE RIGHT\n";
+		api.walkingNonLimit(-10, 0, 0);
 	}
 	
-	private void goSprint(){
-		api.walkingNonLimit(0, 30, 0);
+	private void goStraight(){
+		out += "GO STRAIGHT\n";
+		api.walkingNonLimit(0, 25, -30);
+	}
+
+	private void goSlow(){
+		api.walkingNonLimit(0, 10, -20);
 	}
 	
 	//-------------------------------->> MOVEMENT HANDLING <<--------------------------------//
@@ -122,9 +153,11 @@ public class PakawiNz_AI implements AITemplate {
 	public void trackBall() {
 		out += "TRACKBALL > ";
 		if(ballState == onLEFT){
-			folllowLeft();
+			//folllowLeft();
+			rotateLeft();
 		}else if(ballState == onRIGHT){
-			followRight();
+			//followRight();
+			rotateRight();
 		}else if(ballState == onCENTER){
 			goStraight();
 		}
@@ -132,46 +165,78 @@ public class PakawiNz_AI implements AITemplate {
 	
 	public void runToBall() {
 		out += "RUN TO BALL > ";
+		goSlow();
+	}
+	
+	public void playBall() {
+		out += "PLAY BALL > ";
 		goStraight();
 	}
 	
 	public void kickBall() {
 		out += "KICK BALL > ";
-		//api.playSaveMotion(2);
-		goStraight();
+		api.playSaveMotion(3);
+		//goStraight();
 	}
 	
 	public void changeDirection() {
 		out += "CHANGE DIRECTION > ";
 		//api.playSaveMotion(2);
-		alignRight();
+		slideRight();
 	}
 	
 	public int prepareKick() {
 		out += "Prepare!!\n";
-		if(goalState == onLEFT){
-			if(ballState == onLEFT){
-				rotateLeft();
-			}else if(ballState == onRIGHT){
-				rotateRight();
-			}else if(ballState == onCENTER){
-				alignLeft();
-			}
-		}else if(goalState == onRIGHT){
-			if(ballState == onLEFT){
-				rotateRight();
-			}else if(ballState == onRIGHT){
-				rotateLeft();
-			}else if(ballState == onCENTER){
-				alignRight();
-			}
-		} else {
-			if(GlobalVar.isGoalDirection()){
-				return 1;
-			}else{
-				return -1;
+		updateFineBallState();
+		if(ballState == onLEFT){
+			rotateLeft();
+		}else if(ballState == onRIGHT){
+			rotateRight();
+		}else {
+			if(goalState == onLEFT){
+				slideRight();
+			}else if(goalState == onRIGHT){
+				slideLeft();
+			} else {
+				if(GlobalVar.isGoalDirection()){
+					return 1;
+				}else{
+					return -1;
+				}
 			}
 		}
+		
+//		if(goalState == onLEFT){
+//			if(ballState == onLEFT){
+//				rotateLeft();
+//			}else if(ballState == onRIGHT){
+//				rotateRight();
+//			}else if(ballState == onCENTER){
+//				//alignLeft();
+//				slideRight();
+//			}
+//		}else if(goalState == onRIGHT){
+//			if(ballState == onLEFT){
+//				rotateLeft();
+//			}else if(ballState == onRIGHT){
+//				rotateRight();
+//			}else if(ballState == onCENTER){
+//				//alignRight();
+//				slideLeft();
+//			}
+//		} else {
+//			if(GlobalVar.isGoalDirection()){
+//				if(ballState == onLEFT){
+//					rotateLeft();
+//				}else if(ballState == onRIGHT){
+//					rotateRight();
+//				}else if(ballState == onCENTER){
+//					return 1;
+//				}
+//			}else{
+//				return -1;
+//			}
+//		}
 		return 0;
 	}
 
@@ -224,8 +289,13 @@ public class PakawiNz_AI implements AITemplate {
 		difAccel = dax * dax + day * day + daz * daz;
 		out = "";
 		out += "GOAL POSITION" + GlobalVar.goalPos[0] + "\n";
+		out += "BALL Y" + GlobalVar.ballPos[1] + "\n";
 		out += "BALL POSITION" + GlobalVar.ballPos[0] + "\n";
 		String x =  strategy.run();
+		
+//		if(!x.equals("LOCK  "))
+//			Log.d("pakawinz_debug",out + x);
+
 		return out + x;
 	}
 }
