@@ -66,7 +66,6 @@ public class CameraInterface extends SurfaceView implements SurfaceHolder.Callba
 	public void surfaceCreated(SurfaceHolder holder) {
 
 		try {
-
 			mCamera.setPreviewDisplay(holder);
 			mCamera.setDisplayOrientation(90);
 			mCamera.addCallbackBuffer(loadBuffer);

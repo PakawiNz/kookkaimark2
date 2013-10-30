@@ -1,7 +1,5 @@
 package ivy.kookkai.debugview;
 
-import android.util.Log;
-
 public class PointRangeBin {
 	public static double Z_LOWER_BOUND = -Math.PI/4, Z_UPPER_BOUND = Math.PI/4;
 	public static double MAG_LOWER_BOUND = 0, MAG_UPPER_BOUND = 250;

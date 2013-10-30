@@ -35,10 +35,10 @@ public class ChampStateFull implements StrategyTemplate {
 	public String run() { // ball pos :: 0 X : 1 Y : 2 SIZE;
 		ai.updateCurrentState();
 		
-		if (!GlobalVar.committeeAllowMeToPlay(ai)) {
+		/*if (!GlobalVar.committeeAllowMeToPlay(ai)) {
 			api.ready();
 			return "BLOCKED  ";
-		}
+		}*/
 
 		if (lock())
 			return "LOCK  ";

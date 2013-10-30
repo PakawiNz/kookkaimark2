@@ -7,13 +7,7 @@ import ivy.kookkai.debugview.DebugImgView;
 import android.graphics.Rect;
 
 public class Blob {
-	public static final int WHITE_THRESHOLD = 130;
-	public static final int BLACK_THRESHOLD = 40;
-
-	public static final int MIN_COUNT_ORANGE = 4;
-	public static final int MIN_COUNT_YELLOW = 120;
-	public static final int MIN_COUNT_CYAN = 20;
-	public static final int MIN_COUNT_MAGENTA = 20;
+	
 	private int width, height;
 	private final int qx[] = new int[86400];
 	private byte[] colorData;
@@ -27,12 +21,7 @@ public class Blob {
 	String out = "";
 
 	public Blob() {
-
-	}
-
-	public int getBallPixels() {
-		// TODO :
-		return 0;
+		
 	}
 
 	public String execute(byte[] brightness, byte[] cbcrImg, int w, int h,
@@ -66,71 +55,49 @@ public class Blob {
 		int y, cr, cb;
 		int i, j, k;
 
+		boolean foundGreen;
+		int lastFoundGreen = 0;
+		
 		int w2 = width * 2;
 		int w4 = width * 4;
 		for (i = 0; i < width; i++) {
+			foundGreen = false;
 			for (j = i * 2 + w2 * (height - 1), k = i * 2 + w4 * (height - 1); j >= 0; j -= w2, k -= w4, outIndex++) {
 				cr = (int) img[j] & 0xff;
 				cb = (int) img[j + 1] & 0xff;
 				y = (int) yImg[k] & 0xff;
 
-				colorData[outIndex] = GlobalVar.crcbHashMap[cr][cb];
+				colorData[outIndex] = ColorManager.crcbHashMap[cr][cb];
 				if (colorData[outIndex] == 0) {
-					if (y > WHITE_THRESHOLD)
-						colorData[outIndex] = GlobalVar.WHITE;
-					else if (y < BLACK_THRESHOLD)
-						colorData[outIndex] = GlobalVar.BLACK;
+					if (y > ColorManager.WHITE_THRESHOLD)
+						colorData[outIndex] = ColorManager.WHITE;
+					else if (y < ColorManager.BLACK_THRESHOLD)
+						colorData[outIndex] = ColorManager.BLACK;
 				}
-			}
-		}
-		// /Important delete glare, depend on cellphone used
+				
+				if(colorData[outIndex] == ColorManager.GREEN){
+					foundGreen = true;
+					lastFoundGreen = outIndex;
+				}
+				if(!foundGreen)
+					colorData[outIndex] = ColorManager.OUTCONVEX;
 
-		// Acer
-		// Xperia
-		if (GlobalVar.KOOKKAI_MARK == 2) {
-			int startHeightL = 65;
-			double mL = 1;
-			for (int f = dataHeight - startHeightL; f < dataHeight; f++) {
-				double error = (startHeightL - dataHeight + f) / 6.4;
-				for (int g = 0; g < mL * error * error; g++) {
-					colorData[f * dataWidth + g] = 0;// GlobalVar.CYAN;
-				}
 			}
-			int startHeightR = 65;
-			double mR = 1;
-			for (int f = dataHeight - startHeightR; f < dataHeight; f++) {
-				double error = (startHeightR - dataHeight + f) / 6.4;
-				for (int g = 0; g < mR * error * error; g++) {
-					colorData[(f + 1) * dataWidth - 1 - g] = 0;// GlobalVar.CYAN;
-				}
+			
+			for(j = outIndex - 1 ; j > lastFoundGreen ; j-- ){
+				colorData[j] = ColorManager.OUTCONVEX;
 			}
+			
 		}
-		// Galaxy Nexus
-		else if (GlobalVar.KOOKKAI_MARK == 3) {
-			int startHeightL = 38;
-			double mL = 1;
-			for (int f = dataHeight - startHeightL; f < dataHeight; f++) {
-				double error = (startHeightL - dataHeight + f) / 6.4;
-				for (int g = 0; g < mL * error * error; g++) {
-					colorData[f * dataWidth + g] = 0;// GlobalVar.CYAN;
-				}
-			}
-			int startHeightR = 60;
-			double mR = 1;
-			for (int f = dataHeight - startHeightR; f < dataHeight; f++) {
-				double error = (startHeightR - dataHeight + f) / 6.4;
-				for (int g = 0; g < mR * error * error; g++) {
-					colorData[(f + 1) * dataWidth - 1 - g] = 0;// GlobalVar.CYAN;
-				}
-			}
-		}
+		
 		// can't move to debugImgView coz vision blob will execute painting
+		
 		if (drawcolor) {
 			outIndex = 0;
 			for (i = 0; i < width; i++) {
 				for (j = 0; j < height; j++, outIndex++) {
 					debugImg.drawPixel(j, i,
-							GlobalVar.rColor[colorData[outIndex]]);
+							ColorManager.rColor[colorData[outIndex]]);
 				}
 			}
 		}
@@ -139,16 +106,19 @@ public class Blob {
 	public byte[] getColorData() {
 		return colorData;
 	}
+	
 
 	private void findBlob() {
 		BlobObject b;
 		GlobalVar.blobResult.clear();
 		for (int i = 0; i < colorData.length; i++) {
 			// GREEN should be a defined color, but should not count as a blob
-			if (colorData[i] != 0
-					&& (colorData[i] == GlobalVar.ORANGE
-							|| colorData[i] == GlobalVar.YELLOW
-							|| colorData[i] == GlobalVar.CYAN || colorData[i] == GlobalVar.MAGENTA)) {
+			if (	colorData[i] != 0 && (
+					colorData[i] == ColorManager.ORANGE || 
+					colorData[i] == ColorManager.YELLOW || 
+					colorData[i] == ColorManager.CYAN || 
+					colorData[i] == ColorManager.MAGENTA )) {
+				
 				b = fillBlob(i);
 				if (b != null) {
 					GlobalVar.blobResult.add(b);
@@ -159,6 +129,7 @@ public class Blob {
 	}
 
 	private BlobObject fillBlob(int pos) {
+		
 		qx[0] = pos;
 
 		byte baseColor = getPixel(pos);
@@ -171,6 +142,7 @@ public class Blob {
 		setPixel(pos, (byte) 0);
 
 		for (int i = 0; i < pixelCount; i++) {
+			
 			curX = qx[i] % dataWidth;
 			curY = qx[i] / dataWidth;
 			curPos = qx[i];
@@ -184,29 +156,36 @@ public class Blob {
 			if (curY < minY)
 				minY = curY;
 
-			if (curX > 0 && getPixel(curPos - 1) == baseColor) {
+			// LEFT BREATH
+			if (curX > 0 && getPixel(curPos - 1) == baseColor ){
+//					&& convexL[curY] < curPos && convexR[curY] > curPos) {
 				qx[pixelCount] = curPos - 1;
 				setPixel(curPos - 1, (byte) 0);
 				pixelCount++;
 				centroidX += curX;
 			}
-
-			if (curY > 0 && getPixel(curPos - dataWidth) == baseColor) {
-				qx[pixelCount] = curPos - dataWidth;
-				setPixel(curPos - dataWidth, (byte) 0);
-				pixelCount++;
-				centroidX += curX;
-			}
-
-			if (curX + 1 < dataWidth && getPixel(curPos + 1) == baseColor) {
+			
+			// RIGHT BREATH
+			if (curX + 1 < dataWidth && getPixel(curPos + 1) == baseColor ){
+//					&& convexL[curY] < curPos && convexR[curY] > curPos) {
 				qx[pixelCount] = curPos + 1;
 				setPixel(curPos + 1, (byte) 0);
 				pixelCount++;
 				centroidX += curX;
 			}
 
-			if (curY + 1 < dataHeight
-					&& getPixel(curPos + dataWidth) == baseColor) {
+			// UP BREATH
+			if (curY > 0 && getPixel(curPos - dataWidth) == baseColor ){
+//					&& convexL[curY - 1] < curPos && convexR[curY - 1] > curPos) {
+				qx[pixelCount] = curPos - dataWidth;
+				setPixel(curPos - dataWidth, (byte) 0);
+				pixelCount++;
+				centroidX += curX;
+			}
+
+			// DOWN BREATH
+			if (curY + 1 < dataHeight && getPixel(curPos + dataWidth) == baseColor ){
+//					&& convexL[curY + 1] < curPos && convexR[curY + 1] > curPos) {
 				qx[pixelCount] = curPos + dataWidth;
 				setPixel(curPos + dataWidth, (byte) 0);
 				pixelCount++;
@@ -215,69 +194,29 @@ public class Blob {
 		}
 		centroidX /= pixelCount;
 
-		int minSize = 120;
+		int minSize;
 		switch (baseColor) {
-		case GlobalVar.ORANGE:
-			minSize = MIN_COUNT_ORANGE;
+		case ColorManager.ORANGE:
+			minSize = ColorManager.MIN_COUNT_ORANGE;
 			break;
-		case GlobalVar.YELLOW:
-			minSize = MIN_COUNT_YELLOW;
+		case ColorManager.YELLOW:
+			minSize = ColorManager.MIN_COUNT_YELLOW;
 			break;
-		case GlobalVar.CYAN:
-			minSize = MIN_COUNT_CYAN;
+		case ColorManager.CYAN:
+			minSize = ColorManager.MIN_COUNT_CYAN;
 			break;
-		case GlobalVar.MAGENTA:
-			minSize = MIN_COUNT_MAGENTA;
+		case ColorManager.MAGENTA:
+			minSize = ColorManager.MIN_COUNT_MAGENTA;
 			break;
 		default:
 			minSize = 120;
 			break;
 		}
-		// / check boundary of orange blob if it's surrounded by green
-		double total_count = 0;
-		double green_count = 0;
-		if (pixelCount < minSize && baseColor == GlobalVar.ORANGE) {
-			int GREEN_OFFSET = 10;
-			// check only lower part of frame
-			for (int i = minY + (maxY - minY) / 2; i < maxY; i++) {
-				// left boundary
-				if (minX - GREEN_OFFSET > 0) {
-					total_count++;
-					if (getPixel(minX - GREEN_OFFSET + (i * dataWidth)) == GlobalVar.GREEN) {
-						green_count++;
-					}
-				}
-				// right boundary
-				if (maxX + GREEN_OFFSET < dataWidth) {
-					total_count++;
-					if (getPixel(maxX + GREEN_OFFSET + (i * dataWidth)) == GlobalVar.GREEN) {
-						green_count++;
-					}
-				}
-			}
-			for (int i = minX; i < maxX; i++) {
-				// lower boundary
-				if (maxY + GREEN_OFFSET < dataHeight) {
-					total_count++;
-					if (getPixel(i + ((maxY + GREEN_OFFSET) * dataWidth)) == GlobalVar.GREEN) {
-						green_count++;
-					}
-				}
-			}
-
-			double threshold = 0.2 + (4 - pixelCount) * 0.1;
-			if (green_count / total_count > threshold
-					&& total_count > 0.8 * GREEN_OFFSET) {
-				return new BlobObject(baseColor, new Rect(minX, minY, maxX,
-						maxY), pixelCount, centroidX);
-			} else {
-				return null;
-			}
-		} else if (pixelCount < minSize)
+		
+		if (pixelCount < minSize)
 			return null;
 
-		return new BlobObject(baseColor, new Rect(minX, minY, maxX, maxY),
-				pixelCount, centroidX);
+		return new BlobObject(baseColor, new Rect(minX, minY, maxX, maxY),pixelCount, centroidX);
 	}
 
 	private ArrayList<BlobObject> connectBlob() {
@@ -285,8 +224,8 @@ public class Blob {
 
 		BlobObject objA, objB;
 
-		ArrayList<BlobObject> tempList = (ArrayList<BlobObject>) GlobalVar.blobResult
-				.clone();
+		@SuppressWarnings("unchecked")
+		ArrayList<BlobObject> tempList = (ArrayList<BlobObject>) GlobalVar.blobResult.clone();
 		ArrayList<BlobObject> mergeList = new ArrayList<BlobObject>();
 
 		while (tempList.size() > 0) {

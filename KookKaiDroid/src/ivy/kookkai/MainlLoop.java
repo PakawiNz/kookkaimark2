@@ -15,6 +15,7 @@ import ivy.kookkai.refbox.GameControllerClient;
 import ivy.kookkai.refbox.GameData;
 import ivy.kookkai.refbox.KookKaiTeamInfo;
 import ivy.kookkai.vision.Blob;
+import ivy.kookkai.vision.ColorManager;
 import ivy.kookkai.vision.MapBlob;
 import android.graphics.Color;
 import android.os.Handler;

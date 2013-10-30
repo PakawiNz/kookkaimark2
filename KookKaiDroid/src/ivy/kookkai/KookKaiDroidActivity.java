@@ -30,7 +30,7 @@ public class KookKaiDroidActivity extends Activity implements
 		SensorEventListener {
 	/** Called when the activity is first created. */
 
-	private final int FIELDVIEWHEIGHT = 200;
+	private final int FIELDVIEWHEIGHT = 300;
 	public static final boolean LOCALIZE_MODE = false;
 	CameraInterface cameraInterface;
 	MainlLoop main;
@@ -126,7 +126,7 @@ public class KookKaiDroidActivity extends Activity implements
 		LinearLayout leftVerticalLayout = new LinearLayout(this);
 		leftVerticalLayout.setLayoutParams(new LayoutParams(
 				cameraInterface.frameHeight / 2,
-				cameraInterface.frameWidth / 2 ));
+				cameraInterface.frameWidth / 1 ));
 		leftVerticalLayout.setOrientation(LinearLayout.VERTICAL);
 		leftVerticalLayout.addView(notSetGoalDirection);
 		//leftVerticalLayout.addView(cameraFrame);

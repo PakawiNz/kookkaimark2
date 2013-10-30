@@ -47,15 +47,7 @@ public class MapBlob {
 				break;
 
 			case GlobalVar.GOAL:
-				// check for goal direction
 				if (GlobalVar.isGoalDirection()) {
-					// GlobalVar.goalPos[0] = // (int)(0.35*b.posRect.left +
-					// // 0.65*b.posRect.right)
-					// // - (GlobalVar.frameWidth/2);
-					// b.posRect.centerX() - GlobalVar.frameWidth / 2;
-					// GlobalVar.goalPos[1] = GlobalVar.frameHeight -
-					// b.posRect.bottom;// .centerY();
-					// GlobalVar.goalPos[2] = 1;
 					biggestGoalBlob = b;
 				}
 				break;

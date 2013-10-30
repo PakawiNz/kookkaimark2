@@ -3,30 +3,21 @@ package ivy.kookkai.debugview;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
-import ivy.kookkai.MainlLoop;
 import ivy.kookkai.data.GlobalVar;
-import ivy.kookkai.localization.Ball;
-import ivy.kookkai.localization.Humanoid;
-import ivy.kookkai.localization.Localization;
-import ivy.kookkai.localization.Particle;
-import ivy.kookkai.vision.Blob;
+import ivy.kookkai.vision.ColorManager;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.drawable.shapes.ArcShape;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
@@ -194,6 +185,7 @@ public class HomographyPointsView extends View {
 		}
 	}
 
+	@SuppressLint("DrawAllocation")
 	public void onLayout(boolean changed, int left, int top, int right,
 			int bottom) {
 		if (initialized) {
@@ -230,7 +222,7 @@ public class HomographyPointsView extends View {
 						// TODO don't forget to prioritize other color before
 						// detect
 						// white
-						if (temp > Blob.WHITE_THRESHOLD) {
+						if (temp > ColorManager.WHITE_THRESHOLD) {
 							pStroke.setColor(Color.argb(255, 255, 255, 255));
 
 							if (homo_mag[i][j] > PointRangeBin.MAG_LOWER_BOUND
@@ -453,7 +445,7 @@ public class HomographyPointsView extends View {
 		w = new FileWriter(state_range, true);
 		timestamp = System.currentTimeMillis();
 		w.write("" + timestamp + ",");
-		for (int i = 0; i < mWhiteArea_bybin.BIN_COUNT; i++) {
+		for (int i = 0; i < PointRangeBin.BIN_COUNT; i++) {
 			w.write("" + mWhiteArea_bybin.bin_mag[i] + " ");
 		}
 		w.write("\n");

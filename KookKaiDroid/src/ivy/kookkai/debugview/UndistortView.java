@@ -5,17 +5,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 
 import ivy.kookkai.MainlLoop;
 import ivy.kookkai.data.GlobalVar;
-import ivy.kookkai.localization.Ball;
-import ivy.kookkai.localization.Humanoid;
-import ivy.kookkai.localization.Localization;
-import ivy.kookkai.localization.Particle;
-import ivy.kookkai.vision.Blob;
+import ivy.kookkai.vision.ColorManager;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -110,6 +106,7 @@ public class UndistortView extends View{
 		}
 	}
 	
+	@SuppressLint("DrawAllocation")
 	public void onLayout(boolean changed, int left, int top, int right, int bottom) {
 		if(initialized){
 			int width = Math.abs(left - right);
@@ -131,7 +128,7 @@ public class UndistortView extends View{
 //					int coord2=getCoordinate(i*GlobalVar.REMAP_FACTOR, j*GlobalVar.REMAP_FACTOR);
 					int temp = (int)yPrime[coord1]&0xff;
 					//TODO don't forget to prioritize other color before detect white
-					if(temp>Blob.WHITE_THRESHOLD){
+					if(temp>ColorManager.WHITE_THRESHOLD){
 						pStroke.setColor(Color.argb(temp, 255, 255, 255));
 						int x=getXPix(j*GlobalVar.REMAP_FACTOR);
 						int y=getYPix(i*GlobalVar.REMAP_FACTOR);

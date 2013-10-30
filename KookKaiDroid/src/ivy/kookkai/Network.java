@@ -3,6 +3,7 @@ package ivy.kookkai;
 import ivy.kookkai.data.ColorPlate;
 import ivy.kookkai.data.GlobalVar;
 import ivy.kookkai.debugview.CameraInterface;
+import ivy.kookkai.vision.ColorManager;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -85,18 +86,18 @@ public class Network {
 			ObjectInputStream ois = new ObjectInputStream(bais);
 			Object obj = ois.readObject();
 			if (obj instanceof ArrayList<?>) {
-				GlobalVar.colorList = (ArrayList<ColorPlate>) obj;
+				ColorManager.colorList = (ArrayList<ColorPlate>) obj;
 			}
-			GlobalVar.createColorHashMap();
+			ColorManager.createColorHashMap();
 			packet = dummymsg;
 		} else if (req.contains("getcolorlist")) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ObjectOutputStream oos = new ObjectOutputStream(baos);
-			oos.writeObject(GlobalVar.colorList);
+			oos.writeObject(ColorManager.colorList);
 			byte[] msg = baos.toByteArray();
 			packet = new DatagramPacket(msg, msg.length, address, port);
 		} else if (req.contains("writecolorlist")) {
-			GlobalVar.writeColorList();
+			ColorManager.writeColorList();
 			byte[] sendmsg = new String("ready").getBytes();
 			packet = new DatagramPacket(sendmsg, sendmsg.length, address, port);
 		} else if (req.contains("readcolorlist")) {
