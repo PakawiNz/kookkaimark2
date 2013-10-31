@@ -288,9 +288,14 @@ public class PakawiNz_AI extends FetchBall implements AITemplate {
 		daz = GlobalVar.az - _az;
 		difAccel = dax * dax + day * day + daz * daz;
 		out = "";
-		out += "GOAL POSITION" + GlobalVar.goalPos[0] + "\n";
-		out += "BALL Y" + GlobalVar.ballPos[1] + "\n";
+		out += "\n";
+		out += "GOAL L POSITION" + GlobalVar.goalPosL[0] + "\n";
+		out += "GOAL L Y" + GlobalVar.goalPosL[1] + "\n";
+		out += "GOAL R POSITION" + GlobalVar.goalPosR[0] + "\n";
+		out += "GOAL R Y" + GlobalVar.goalPosR[1] + "\n";
 		out += "BALL POSITION" + GlobalVar.ballPos[0] + "\n";
+		out += "BALL Y" + GlobalVar.ballPos[1] + "\n";
+		out += "\n";
 		String x =  strategy.run();
 		
 //		if(!x.equals("LOCK  "))
