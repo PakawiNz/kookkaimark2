@@ -6,18 +6,12 @@ import ivy.kookkai.api.KookKaiAndroidAPI;
 import ivy.kookkai.data.GlobalVar;
 import ivy.kookkai.debugview.CameraInterface;
 import ivy.kookkai.debugview.DebugImgView;
-import ivy.kookkai.debugview.HomographyPointsView;
-import ivy.kookkai.debugview.LocalizationView;
-import ivy.kookkai.debugview.UndistortView;
-import ivy.kookkai.localization.Localization;
 import ivy.kookkai.refbox.Constants;
 import ivy.kookkai.refbox.GameControllerClient;
 import ivy.kookkai.refbox.GameData;
 import ivy.kookkai.refbox.KookKaiTeamInfo;
 import ivy.kookkai.vision.Blob;
 import ivy.kookkai.vision.BlobAnalyser;
-import ivy.kookkai.vision.ColorManager;
-import ivy.kookkai.vision.MapBlob;
 import android.graphics.Color;
 import android.os.Handler;
 import android.util.Log;
@@ -33,24 +27,16 @@ import com.example.udpfootballer.UDPServer;
 
 public class MainlLoop implements Runnable {
 	
-	private final static int UNDISTORT_PREVIEW_RATE_FACTOR = 12;
-	//TODO edit debug mode
-	public static final boolean DEBUGMODE = true;
-	
 	private final Handler handler = new Handler();
 	private CameraInterface camInterface;
 	private DebugImgView debugImg;
-	private LocalizationView local;
-	private UndistortView undistort;
-	private HomographyPointsView homography;
 	private boolean running;
 	
 	private TextView debugText;
 	private String outString;
 	private Blob visionBlob;
 	private KookKaiAndroidAPI robotAPI;
-	private MapBlob mapBlob;
-	private Localization localization;
+	private BlobAnalyser mapBlob;
 	
 	private AITemplate ai;
 	private GameControllerClient gameClient;
@@ -62,11 +48,6 @@ public class MainlLoop implements Runnable {
 	private KookKaiTwin twin;
 
 	private CheckBox drawColorCheck;
-	private int frameCounter = 0;
-	private int bestParWeight = 0;
-	
-	String stringUpdate="";
-	boolean needUpdate = false;
 
 	public MainlLoop(CameraInterface cam, DebugImgView dimg,
 			TextView dtext, CheckBox drawColor
@@ -126,8 +107,7 @@ public class MainlLoop implements Runnable {
 	public void run() {
 		long timeStamp = System.currentTimeMillis();
 		// execute vision
-		debugImg.reset();//TODO find out why can't move to another place
-		//fieldView.reset();
+		debugImg.reset();
 		
 		//Message Sent
 		if(GlobalVar.ballPos[2] > 0) 
@@ -143,14 +123,14 @@ public class MainlLoop implements Runnable {
 		
 		client.sendMessage(outMessage.getBytes());
 		outString = "ROBOT [MK" + GlobalVar.KOOKKAI_MARK + "]" + "\n";
-//		outString += robotAPI.getServerStatus();
-//		outString += "\n-- Me Myself -- \n";
-//		outString += "My State : " + myState.toString() + "\n";
-//		outString += "My Pixel : " + GlobalVar.ballPos[3] + "\n";
-//		outString += "\n-- Network -- \n";
-//		outString += "Friends' Ball Pixels : " + inboxMessage.getBallPixels() + "\n";
-//		outString += "Friends' State : " + inboxMessage.toString() + "\n";
-//		outString += "\n";
+		outString += robotAPI.getServerStatus();
+		outString += "\n-- Me Myself -- \n";
+		outString += "My State : " + myState.toString() + "\n";
+		outString += "My Pixel : " + GlobalVar.ballPos[3] + "\n";
+		outString += "\n-- Network -- \n";
+		outString += "Friends' Ball Pixels : " + inboxMessage.getBallPixels() + "\n";
+		outString += "Friends' State : " + inboxMessage.toString() + "\n";
+		outString += "\n";
 		
 		GameData gameData = gameClient.getGameData();
 		GlobalVar.gameData = gameData;
@@ -168,21 +148,24 @@ public class MainlLoop implements Runnable {
 		byte[] cbcr = camInterface.getCbCr();
 		byte[] y = camInterface.getYPrime();
 		
+		
+		
 		//NOTE: execute will paint blob
 		outString += visionBlob.execute(y,cbcr, w, h, debugImg, drawColorCheck.isChecked());
 		outString += mapBlob.execute();
-		
 		for (int i = 0; i < GlobalVar.blobResult.size(); i++) {
 			if(GlobalVar.blobResult.get(i).tag==GlobalVar.BALL){
 				debugImg.drawRect(GlobalVar.blobResult.get(i).posRect, Color.GREEN);
-			}else{
+			}
+			else{
 				debugImg.drawRect(GlobalVar.blobResult.get(i).posRect, Color.WHITE);
 			}
 		}
 		for (int i = 0; i < GlobalVar.mergeResult.size(); i++) {
 			if(GlobalVar.mergeResult.get(i).tag==GlobalVar.BALL){
 				debugImg.drawRect(GlobalVar.mergeResult.get(i).posRect, Color.RED);
-			}else{
+			}
+			else{
 				debugImg.drawRect(GlobalVar.mergeResult.get(i).posRect, Color.BLACK);
 			}
 		}
@@ -196,37 +179,36 @@ public class MainlLoop implements Runnable {
 
 		long timeDiff = System.currentTimeMillis() - timeStamp;
 		debugText.append("\n" + timeDiff + "ms");
+		debugText.append("\n"+KookKaiTeamInfo.getInstance().getTeamInfo().teamNumber);
+		if(KookKaiTeamInfo.getInstance().getTeamInfo().teamColour==0)debugText.append("\n"+"Team:Blue");
+		else debugText.append("\n"+"Team:Red");
 		
-//		debugText.append("\n"+KookKaiTeamInfo.getInstance().getTeamInfo().teamNumber);
-//		if(KookKaiTeamInfo.getInstance().getTeamInfo().teamColour==0)debugText.append("\n"+"Team:Blue");
-//		else debugText.append("\n"+"Team:Red");
-//		
-//		if(KookKaiTeamInfo.getInstance().getTeamInfo().goalColour==0)debugText.append("\n"+"Goal:Blue");
-//		else debugText.append("\n"+"Goal:Yellow");
-//		
-//		if(gameData.firstHalf==1)
-//			debugText.append("\n"+"FirstHalf");
-//			else debugText.append("\n"+"SecondHalf");
-//			if(gameData.state==0) debugText.append("\n"+"State:Initial");
-//			else if(gameData.state==1 ) debugText.append("\n"+"State:Ready");
-//			else if(gameData.state==2) debugText.append("\n"+"State:Set");
-//			else if(gameData.state==3) debugText.append("\n"+"State:Play");
-//			else if(gameData.state==4) debugText.append("\n"+"State:Finish");			
-//			
-//		if(gameData.secondaryState==0) debugText.append("\n"+"Extra:Normal");
-//		else if(gameData.secondaryState==1) debugText.append("\n"+"Extra:PenaltyShoot");
-//		else if(gameData.secondaryState==2) debugText.append("\n"+"Extra:Overtime");
-//		
-//		for(byte i=0;i< Constants.MAX_NUM_PLAYERS-8;i++){
-//			if(KookKaiTeamInfo.getInstance().getTeamInfo().player[i].penalty==0)  debugText.append("\n"+"Player"+i+"Penalty:None");
-//			else if(KookKaiTeamInfo.getInstance().getTeamInfo().player[i].penalty==1)  debugText.append("\n"+"Player"+i+" Penalty:Ball Manipulation");
-//			else if(KookKaiTeamInfo.getInstance().getTeamInfo().player[i].penalty==2)  debugText.append("\n"+"Player"+i+" Penalty:Ball Physical Contact");
-//			else if(KookKaiTeamInfo.getInstance().getTeamInfo().player[i].penalty==3)  debugText.append("\n"+"Player"+i+" Penalty:Illegal Attack");
-//			else if(KookKaiTeamInfo.getInstance().getTeamInfo().player[i].penalty==4)  debugText.append("\n"+"Player"+i+" Penalty:Illegal Defence");
-//			else if(KookKaiTeamInfo.getInstance().getTeamInfo().player[i].penalty==5)  debugText.append("\n"+"Player"+i+" Penalty:Request for Pickup");
-//			else if(KookKaiTeamInfo.getInstance().getTeamInfo().player[i].penalty==6)  debugText.append("\n"+"Player"+i+" Penalty:Request for Service");
-//			else if(KookKaiTeamInfo.getInstance().getTeamInfo().player[i].penalty==7)  debugText.append("\n"+"Player"+i+" Penalty:Upgrade Pickup to Service");
-//		}
+		if(KookKaiTeamInfo.getInstance().getTeamInfo().goalColour==0)debugText.append("\n"+"Goal:Blue");
+		else debugText.append("\n"+"Goal:Yellow");
+		
+		if(gameData.firstHalf==1)
+			debugText.append("\n"+"FirstHalf");
+			else debugText.append("\n"+"SecondHalf");
+			if(gameData.state==0) debugText.append("\n"+"State:Initial");
+			else if(gameData.state==1 ) debugText.append("\n"+"State:Ready");
+			else if(gameData.state==2) debugText.append("\n"+"State:Set");
+			else if(gameData.state==3) debugText.append("\n"+"State:Play");
+			else if(gameData.state==4) debugText.append("\n"+"State:Finish");			
+			
+		if(gameData.secondaryState==0) debugText.append("\n"+"Extra:Normal");
+		else if(gameData.secondaryState==1) debugText.append("\n"+"Extra:PenaltyShoot");
+		else if(gameData.secondaryState==2) debugText.append("\n"+"Extra:Overtime");
+		
+		for(byte i=0;i< Constants.MAX_NUM_PLAYERS-8;i++){
+			if(KookKaiTeamInfo.getInstance().getTeamInfo().player[i].penalty==0)  debugText.append("\n"+"Player"+i+"Penalty:None");
+			else if(KookKaiTeamInfo.getInstance().getTeamInfo().player[i].penalty==1)  debugText.append("\n"+"Player"+i+" Penalty:Ball Manipulation");
+			else if(KookKaiTeamInfo.getInstance().getTeamInfo().player[i].penalty==2)  debugText.append("\n"+"Player"+i+" Penalty:Ball Physical Contact");
+			else if(KookKaiTeamInfo.getInstance().getTeamInfo().player[i].penalty==3)  debugText.append("\n"+"Player"+i+" Penalty:Illegal Attack");
+			else if(KookKaiTeamInfo.getInstance().getTeamInfo().player[i].penalty==4)  debugText.append("\n"+"Player"+i+" Penalty:Illegal Defence");
+			else if(KookKaiTeamInfo.getInstance().getTeamInfo().player[i].penalty==5)  debugText.append("\n"+"Player"+i+" Penalty:Request for Pickup");
+			else if(KookKaiTeamInfo.getInstance().getTeamInfo().player[i].penalty==6)  debugText.append("\n"+"Player"+i+" Penalty:Request for Service");
+			else if(KookKaiTeamInfo.getInstance().getTeamInfo().player[i].penalty==7)  debugText.append("\n"+"Player"+i+" Penalty:Upgrade Pickup to Service");
+		}
 		if (running) {
 			if (timeDiff < 90)
 				handler.postDelayed(this, 100 - timeDiff);

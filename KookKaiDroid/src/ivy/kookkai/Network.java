@@ -16,7 +16,6 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 
-import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 
@@ -42,6 +41,7 @@ public class Network {
 	private final byte[] buffer = new byte[65535];
 	private static final int maxdatagramsize = 50000;
 
+	@SuppressWarnings("unchecked")
 	private void receiveandresponse() throws IOException, ClassNotFoundException {
 		// System.out.println("waiting");
 		DatagramPacket packet = new DatagramPacket(buffer, buffer.length);

@@ -1,6 +1,6 @@
 package ivy.kookkai.ai;
 
-import android.util.Log;
+//import android.util.Log;
 import kookkai.strategy.ChampStateFull;
 import kookkai.strategy.StrategyTemplate;
 import ivy.kookkai.ai.AITemplate;
@@ -13,7 +13,6 @@ public class PakawiNz_AI extends FetchBall implements AITemplate {
 	private double falldownThreashold = 150.0;
 	private double fallCounter = 0;
 	private double getupThreashold = 10.0;
-	private double goalPos;
 	private double _ax = 0.3, _ay = 9.5, _az = 4.8;
 	private double dax;
 	private double day;
@@ -30,8 +29,6 @@ public class PakawiNz_AI extends FetchBall implements AITemplate {
 		this.api = api;
 		this.strategy = new ChampStateFull(this);
 	}
-	
-	private final int Ball_Adjacent = 30;
 	
 	private final int BallX_CENTER = 0;
 	private final int BallX_TRESH = 50;
@@ -88,14 +85,28 @@ public class PakawiNz_AI extends FetchBall implements AITemplate {
 	
 	//-------------------------------->> WALKING HANDLING <<--------------------------------//
 	
+	@SuppressWarnings("unused")
 	private void alignLeft(){
 		out += "ALIGN LEFT\n";
 		api.walkingNonLimit(-10, 0, 50);
 	}
 
+	@SuppressWarnings("unused")
 	private void alignRight(){
 		out += "ALIGN RIGHT\n";
 		api.walkingNonLimit(10, 0, -50);
+	}
+	
+	@SuppressWarnings("unused")
+	private void folllowLeft(){
+		out += "FOLLOW LEFT\n";
+		api.walkingNonLimit(5, 30, 0);
+	}
+
+	@SuppressWarnings("unused")
+	private void followRight(){
+		out += "FOLLOW RIGHT\n";
+		api.walkingNonLimit(-5, 30, 0);
 	}
 
 	private void rotateLeft(){
@@ -106,16 +117,6 @@ public class PakawiNz_AI extends FetchBall implements AITemplate {
 	private void rotateRight(){
 		out += "ROTATE RIGHT\n";
 		api.walkingNonLimit(0, 0, 80);
-	}
-	
-	private void folllowLeft(){
-		out += "FOLLOW LEFT\n";
-		api.walkingNonLimit(5, 30, 0);
-	}
-
-	private void followRight(){
-		out += "FOLLOW RIGHT\n";
-		api.walkingNonLimit(-5, 30, 0);
 	}
 	
 	private void slideLeft(){

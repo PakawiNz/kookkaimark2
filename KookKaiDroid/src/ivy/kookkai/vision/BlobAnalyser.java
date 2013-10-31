@@ -5,11 +5,10 @@ import java.util.ArrayList;
 import android.util.Log;
 import ivy.kookkai.data.GlobalVar;
 
-public class BlobAnalyser extends MapBlob {
+public class BlobAnalyser {
 	
 	private static final double filterRatio = 0.2;
 	
-	@Override
 	public String execute(){
 		GlobalVar.ballPos[2] = -1;
 		GlobalVar.goalPosL[2] = -1;
