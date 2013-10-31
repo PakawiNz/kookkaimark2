@@ -167,6 +167,8 @@ public class MainlLoop implements Runnable {
 		byte[] cbcr = camInterface.getCbCr();
 		byte[] y = camInterface.getYPrime();
 		
+		
+		
 		//NOTE: execute will paint blob
 		outString += visionBlob.execute(y,cbcr, w, h, debugImg, drawColorCheck.isChecked());
 		outString += mapBlob.execute();

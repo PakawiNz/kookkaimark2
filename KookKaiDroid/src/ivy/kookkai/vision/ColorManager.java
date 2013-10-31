@@ -14,6 +14,7 @@ import android.os.Environment;
 import android.util.Log;
 
 public class ColorManager {
+	
 	public final static int UNDEFINE = 0;
 	public final static int ORANGE = 1;
 	public final static int YELLOW = 2;
@@ -22,7 +23,7 @@ public class ColorManager {
 	public final static int GREEN = 5;
 	public final static int WHITE = 6;
 	public final static int BLACK = 7;
-	public final static int SHADOWGREEN = 8;
+	public final static int DARKGREEN = 8;
 	
 	public final static int OUTCONVEX = 0;
 	
@@ -61,7 +62,8 @@ public class ColorManager {
 			colorList.add(new ColorPlate(GREEN, Color.GREEN, 0, 120, 0, 108));
 			colorList.add(new ColorPlate(WHITE, Color.WHITE, 0, 42, 0, 16));
 			colorList.add(new ColorPlate(BLACK, Color.BLACK, 10, 20, 0, 10));
-
+			colorList.add(new ColorPlate(DARKGREEN, Color.DKGRAY, 10, 20, 0, 10));
+			
 		}
 
 		createColorHashMap();
@@ -82,7 +84,7 @@ public class ColorManager {
 			// w.close();
 
 			BufferedReader fr = new BufferedReader(new FileReader(filename));
-			int cPrams[] = new int[28];
+			int cPrams[] = new int[32];
 			int x = 0;
 			String line;
 			while ((line = fr.readLine()) != null) {
@@ -105,15 +107,6 @@ public class ColorManager {
 					cPrams[1], cPrams[2], cPrams[3]));
 			colorList.add(new ColorPlate(YELLOW, Color.YELLOW, cPrams[4],
 					cPrams[5], cPrams[6], cPrams[7]));
-			/*
-			 * colorList.add(new ColorPlate(BLUE, Color.BLUE, cPrams[8],
-			 * cPrams[9], cPrams[10], cPrams[11])); colorList.add(new
-			 * ColorPlate(CYAN, Color.CYAN, cPrams[12], cPrams[13], cPrams[14],
-			 * cPrams[15])); colorList.add(new ColorPlate(MAGENTA,
-			 * Color.MAGENTA, cPrams[16], cPrams[17], cPrams[18], cPrams[19]));
-			 * colorList.add(new ColorPlate(GREEN, Color.GREEN, cPrams[20],
-			 * cPrams[21], cPrams[22], cPrams[23]));
-			 */
 			colorList.add(new ColorPlate(CYAN, Color.CYAN, cPrams[8],
 					cPrams[9], cPrams[10], cPrams[11]));
 			colorList.add(new ColorPlate(MAGENTA, Color.MAGENTA, cPrams[12],
@@ -124,6 +117,8 @@ public class ColorManager {
 					cPrams[21], cPrams[22], cPrams[23]));
 			colorList.add(new ColorPlate(BLACK, Color.BLACK, cPrams[24],
 					cPrams[25], cPrams[26], cPrams[27]));
+			colorList.add(new ColorPlate(DARKGREEN, Color.DKGRAY, cPrams[28],
+					cPrams[29], cPrams[30], cPrams[31]));
 
 		}
 	}

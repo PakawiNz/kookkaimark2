@@ -78,9 +78,11 @@ public class DebugImgView extends View {
 			canvas.drawBitmap(img, 0, 0, null);
 
 	}
+	
 	private int getXPix(int x){
 		return x*getWidth()/FieldView.TOTALLENGTH;
 	}
+	
 	private int getYPix(int y){
 		return y*getHeight()/FieldView.TOTALWIDTH;
 	}
