@@ -182,7 +182,7 @@ public class MainlLoop implements Runnable {
 		}
 		for (int i = 0; i < GlobalVar.mergeResult.size(); i++) {
 			if(GlobalVar.mergeResult.get(i).tag==GlobalVar.BALL){
-				debugImg.drawRect(GlobalVar.mergeResult.get(i).posRect, Color.GREEN);
+				debugImg.drawRect(GlobalVar.mergeResult.get(i).posRect, Color.RED);
 			}
 			else{
 				debugImg.drawRect(GlobalVar.mergeResult.get(i).posRect, Color.BLACK);

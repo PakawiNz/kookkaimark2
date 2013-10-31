@@ -27,11 +27,11 @@ public class ColorManager {
 	
 	public final static int OUTCONVEX = 0;
 	
-	public static final int WHITE_THRESHOLD = 130;
-	public static final int BLACK_THRESHOLD = 40;
+	public static final int WHITE_THRESHOLD = 250;
+	public static final int BLACK_THRESHOLD = 20;
 
 	public static final int MIN_COUNT_ORANGE = 4;
-	public static final int MIN_COUNT_YELLOW = 120;
+	public static final int MIN_COUNT_YELLOW = 50;
 	public static final int MIN_COUNT_CYAN = 20;
 	public static final int MIN_COUNT_MAGENTA = 20;
 	

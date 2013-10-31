@@ -49,7 +49,7 @@ public class Blob {
 		threshold();
 		findBlob();
 		ArrayList<BlobObject> finalresult = connectBlob();
-		filterNoise(finalresult);
+		//filterNoise(finalresult);
 		GlobalVar.mergeResult = finalresult;
 
 		return out;
@@ -78,34 +78,34 @@ public class Blob {
 				cb = (int) img[j + 1] & 0xff;
 				y = (int) yImg[k] & 0xff;
 
-				colorData[outIndex] = ColorManager.crcbHashMap[cr][cb];
-				
-				if (colorData[outIndex] == ColorManager.UNDEFINE) {
-					if (y > ColorManager.WHITE_THRESHOLD)
-						colorData[outIndex] = ColorManager.WHITE;
-					else if (y < ColorManager.BLACK_THRESHOLD)
-						colorData[outIndex] = ColorManager.BLACK;
-				}
+				if (y > ColorManager.WHITE_THRESHOLD)
+					colorData[outIndex] = ColorManager.WHITE;
+				else if (y < ColorManager.BLACK_THRESHOLD)
+					colorData[outIndex] = ColorManager.BLACK;
+				else 
+					colorData[outIndex] = ColorManager.crcbHashMap[cr][cb];
 				
 				/** CONVEX HULL MAKING */
 				
-				if(colorData[outIndex] == ColorManager.DARKGREEN){
-					if(!foundDarkGreen) {
+				if(colorData[outIndex] == ColorManager.DARKGREEN){	// this is darkgreen
+					if(!foundDarkGreen) {								// this is the first darkgreen
 						firstDarkgreen = outIndex;
 						foundDarkGreen = true;
 					}
 					
-					if(foundGreen && convexR[i] == outIndex - 1){
-						convexR[i] = outIndex;
+					if(foundGreen){		// this adjacent to green
+						if(convexR[i] == outIndex - 1){
+							convexR[i] = outIndex;
+						}
 						colorData[outIndex] = ColorManager.GREEN;
 					}
 				} else {
-					if(colorData[outIndex] == ColorManager.GREEN){
-						if(!foundGreen) {
-							if(foundDarkGreen) {
-								convexL[i] = firstDarkgreen;
+					if(colorData[outIndex] == ColorManager.GREEN){	// this is green
+						if(!foundGreen) {								// this is the firstgreen
+							if(foundDarkGreen) {							// have some darkgreen adjacent to this
+								convexL[i] = firstDarkgreen;		
 								for(int a = firstDarkgreen; a < outIndex ; a++){
-									colorData[outIndex] = ColorManager.GREEN;
+									colorData[a] = ColorManager.GREEN;
 								}
 							} else {
 								convexL[i] = outIndex;
@@ -113,11 +113,22 @@ public class Blob {
 							foundGreen = true;
 						}
 						convexR[i] = outIndex;
+					}else {
+						foundDarkGreen = false;
 					}
-					foundDarkGreen = false;
 				}
 			}
 		}	
+		
+		// can't move to debugImgView coz vision blob will execute painting
+		if (drawcolor) {
+			outIndex = 0;
+			for (i = 0; i < width; i++) {
+				for (j = 0; j < height; j++, outIndex++) {
+					debugImg.drawPixel(j, i, ColorManager.rColor[colorData[outIndex]]);
+				}
+			}
+		}
 	}
 
 	public byte[] getColorData() {
@@ -134,10 +145,10 @@ public class Blob {
 				// GREEN should be a defined color, but should not count as a blob
 				if (convexL[i] < outIndex && outIndex < convexR[i]) {
 					if(	colorData[outIndex] != ColorManager.UNDEFINE && (
-						colorData[outIndex] == ColorManager.ORANGE || 
+						//colorData[outIndex] == ColorManager.MAGENTA || 
+						//colorData[outIndex] == ColorManager.CYAN || 
 						colorData[outIndex] == ColorManager.YELLOW || 
-						colorData[outIndex] == ColorManager.CYAN || 
-						colorData[outIndex] == ColorManager.MAGENTA )) {			
+						colorData[outIndex] == ColorManager.ORANGE )) {			
 					
 						b = fillBlob(outIndex);
 						if (b != null) {
@@ -160,15 +171,7 @@ public class Blob {
 //			}
 //		}
 		
-		// can't move to debugImgView coz vision blob will execute painting
-		if (drawcolor) {
-			outIndex = 0;
-			for (int i = 0; i < width; i++) {
-				for (int j = 0; j < height; j++, outIndex++) {
-					debugImg.drawPixel(j, i, ColorManager.rColor[colorData[outIndex]]);
-				}
-			}
-		}
+		
 	}
 
 	private BlobObject fillBlob(int pos) {
@@ -284,7 +287,6 @@ public class Blob {
 						i--;
 					}
 				}
-
 			}
 
 			objA.tag += 10;
