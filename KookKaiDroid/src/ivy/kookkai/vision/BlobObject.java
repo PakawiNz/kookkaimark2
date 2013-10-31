@@ -18,7 +18,6 @@ public class BlobObject {
 
 	public int getSize() {
 		return posRect.width() * posRect.height();
-
 	}
 
 }
