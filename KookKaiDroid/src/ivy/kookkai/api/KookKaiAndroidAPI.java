@@ -1,6 +1,7 @@
 package ivy.kookkai.api;
 
 import ivy.kookkai.data.GlobalVar;
+import ivy.kookkai.localization.Humanoid;
 
 import java.io.IOException;
 
@@ -168,6 +169,9 @@ public class KookKaiAndroidAPI {
 			server.send(out);
 			// outSerial.write(writeBuffer, 0, 6);
 			sendEnding();
+			
+			//TODO localization part for motion model
+			Humanoid.incrementMotion(0, 1.4, 0);
 		}
 
 		catch (Exception e) {
@@ -353,7 +357,7 @@ public class KookKaiAndroidAPI {
 	 * 
 	 * try { int n = inSerial.read(readBuffer); readBuffer[n] = '\0';
 	 * 
-	 * } catch (IOException e) {
+	 * } catch (IOException e) { // TODO Auto-generated catch block
 	 * e.printStackTrace(); }
 	 * 
 	 * return readBuffer; }

@@ -3,6 +3,10 @@ package ivy.kookkai;
 import ivy.kookkai.data.GlobalVar;
 import ivy.kookkai.debugview.CameraInterface;
 import ivy.kookkai.debugview.DebugImgView;
+import ivy.kookkai.debugview.FieldView;
+import ivy.kookkai.debugview.HomographyPointsView;
+import ivy.kookkai.debugview.LocalizationView;
+import ivy.kookkai.debugview.UndistortView;
 import android.app.Activity;
 import android.content.Context;
 import android.hardware.Sensor;
@@ -26,6 +30,7 @@ public class KookKaiDroidActivity extends Activity implements
 		SensorEventListener {
 	/** Called when the activity is first created. */
 
+	private final int FIELDVIEWHEIGHT = 300;
 	private final static int MOVING_AVG_N = 5;
 	CameraInterface cameraInterface;
 	MainlLoop main;
@@ -40,6 +45,9 @@ public class KookKaiDroidActivity extends Activity implements
 	
 	public static final String PATH = Environment
 			.getExternalStorageDirectory().getAbsolutePath();
+	private static final String MAGNETIC_MINMAX_FILE = "/SensorData/magnetic_minmax.txt";
+	private static final String MAGNETIC_MINMAX_NAME = PATH
+			+ MAGNETIC_MINMAX_FILE;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -110,10 +118,11 @@ public class KookKaiDroidActivity extends Activity implements
 		cb.setText("draw color");
 		cb.setFocusable(false);
 
+		Log.d("frame", "button height:");// why can't get button height
 		LinearLayout leftVerticalLayout = new LinearLayout(this);
 		leftVerticalLayout.setLayoutParams(new LayoutParams(
 				cameraInterface.frameHeight / 2,
-				cameraInterface.frameWidth *2/ 3 ));
+				cameraInterface.frameWidth / 1 ));
 		leftVerticalLayout.setOrientation(LinearLayout.VERTICAL);
 		leftVerticalLayout.addView(notSetGoalDirection);
 		leftVerticalLayout.addView(setGoalDirection);
@@ -121,10 +130,12 @@ public class KookKaiDroidActivity extends Activity implements
 		leftVerticalLayout.addView(cb);
 
 		// Right Vertical Layout zone
+		FrameLayout fieldFrame = new FrameLayout(this);
 
 		LinearLayout rightVerticalLayout = new LinearLayout(this);
 		rightVerticalLayout.setLayoutParams(new LayoutParams(
-				LayoutParams.MATCH_PARENT, 350));
+				LayoutParams.MATCH_PARENT, FIELDVIEWHEIGHT
+						+ UndistortView.VIEWHEIGHT));
 		rightVerticalLayout.setOrientation(LinearLayout.VERTICAL);
 		rightVerticalLayout.addView(cameraFrame);
 
@@ -145,7 +156,8 @@ public class KookKaiDroidActivity extends Activity implements
 		compassManager.registerListener(this,
 				sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
 				SensorManager.SENSOR_DELAY_NORMAL);
-		main = new MainlLoop(cameraInterface, debugImgview, debugText, cb);
+		main = new MainlLoop(cameraInterface, debugImgview, 
+				debugText, cb);
 	}
 
 	@Override
