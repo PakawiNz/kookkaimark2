@@ -51,14 +51,6 @@ public class DebugImgView extends View {
 	public void reset() {
 		img.eraseColor(0);
 		drawRect(new Rect(1,1,getWidth()-1,getHeight()-1),Color.CYAN);
-		//TODO find out why can't move to mainlloop
-//		for (int i = 0; i < GlobalVar.blobResult.size(); i++) {
-//			drawRect(GlobalVar.blobResult.get(i).posRect, Color.GREEN);
-//		}
-//		for (int i = 0; i < GlobalVar.mergeResult.size(); i++) {
-//			drawRect(GlobalVar.mergeResult.get(i).posRect, Color.BLUE);
-//		}
-		
 	}
 
 	public void drawRect(Rect r, int color) {
@@ -68,7 +60,6 @@ public class DebugImgView extends View {
 
 	public void drawPixel(int x, int y, int color) {
 		img.setPixel(x, y, color);
-		// Log.d("ivy_debug", color+ " color ");
 	}
 
 	@Override
@@ -77,13 +68,5 @@ public class DebugImgView extends View {
 		if (img != null)
 			canvas.drawBitmap(img, 0, 0, null);
 
-	}
-	
-	private int getXPix(int x){
-		return x*getWidth()/FieldView.TOTALLENGTH;
-	}
-	
-	private int getYPix(int y){
-		return y*getHeight()/FieldView.TOTALWIDTH;
 	}
 }
