@@ -31,20 +31,16 @@ public class KookKaiDroidActivity extends Activity implements
 	/** Called when the activity is first created. */
 
 	private final int FIELDVIEWHEIGHT = 300;
-	public static final boolean LOCALIZE_MODE = false;
+	private final static int MOVING_AVG_N = 5;
 	CameraInterface cameraInterface;
 	MainlLoop main;
 	DebugImgView debugImgview;
-	FieldView fieldView;
-	UndistortView undistortView;
-	HomographyPointsView homographyView;
-	LocalizationView localizationView;
 	TextView debugText,headingText;
 	Context mContext;	
 	
 	//Sensor Part
 	SensorManager sensorManager, compassManager;
-	float mValues[] = new float[3];
+	float mValues[];
 	float[] acc = new float[3];
 	
 	public static final String PATH = Environment
@@ -129,7 +125,6 @@ public class KookKaiDroidActivity extends Activity implements
 				cameraInterface.frameWidth / 1 ));
 		leftVerticalLayout.setOrientation(LinearLayout.VERTICAL);
 		leftVerticalLayout.addView(notSetGoalDirection);
-		//leftVerticalLayout.addView(cameraFrame);
 		leftVerticalLayout.addView(setGoalDirection);
 		leftVerticalLayout.addView(exitButton);
 		leftVerticalLayout.addView(cb);
@@ -137,40 +132,11 @@ public class KookKaiDroidActivity extends Activity implements
 		// Right Vertical Layout zone
 		FrameLayout fieldFrame = new FrameLayout(this);
 
-		fieldView = new FieldView(this);
-		fieldView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
-				FIELDVIEWHEIGHT));
-
-		localizationView = new LocalizationView(this);
-		localizationView.setLayoutParams(new LayoutParams(
-				LayoutParams.MATCH_PARENT, FIELDVIEWHEIGHT));
-
-		//fieldFrame.addView(fieldView);
-		fieldFrame.addView(localizationView);
-
-		undistortView = new UndistortView(this);
-		undistortView.setLayoutParams(new LayoutParams(undistortView.VIEWWIDTH,
-				undistortView.VIEWHEIGHT));
-
-		homographyView = new HomographyPointsView(this);
-		homographyView.setLayoutParams(new LayoutParams(
-				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-
-		LinearLayout undistort_n_homo = new LinearLayout(this);
-		undistort_n_homo.setLayoutParams(new LayoutParams(
-				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-		undistort_n_homo.setOrientation(LinearLayout.HORIZONTAL);
-		undistort_n_homo.addView(undistortView);
-		undistort_n_homo.addView(homographyView);
-
 		LinearLayout rightVerticalLayout = new LinearLayout(this);
 		rightVerticalLayout.setLayoutParams(new LayoutParams(
 				LayoutParams.MATCH_PARENT, FIELDVIEWHEIGHT
 						+ UndistortView.VIEWHEIGHT));
 		rightVerticalLayout.setOrientation(LinearLayout.VERTICAL);
-		//rightVerticalLayout.addView(fieldFrame);
-		// rightVerticalLayout.addView(undistortFrame);
-		//rightVerticalLayout.addView(undistort_n_homo);
 		rightVerticalLayout.addView(cameraFrame);
 
 		debugText = (TextView) findViewById(R.id.debugText);
@@ -191,8 +157,6 @@ public class KookKaiDroidActivity extends Activity implements
 				sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
 				SensorManager.SENSOR_DELAY_NORMAL);
 		main = new MainlLoop(cameraInterface, debugImgview, 
-//				localizationView,
-//				undistortView, homographyView, 
 				debugText, cb);
 	}
 
@@ -284,15 +248,24 @@ public class KookKaiDroidActivity extends Activity implements
 			GlobalVar.ax = acc[0] = event.values[0];
 			GlobalVar.ay = acc[1] = event.values[1];
 			GlobalVar.az = acc[2] = event.values[2];
+			
 
 		} else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
 			float R[] = new float[9];
 			mValues = new float[3];
-
+			float oldHeading = GlobalVar.heading;
+			
 			SensorManager.getRotationMatrix(R, null, acc, event.values);
 			SensorManager.getOrientation(R, mValues);
-			headingText.setText("Default:" + GlobalVar.GOAL_DIRECTION + "\n" + "Rotated:"+String.format("%.2f", mValues[0]));
-			GlobalVar.setHeading(mValues[0]);
+			headingText.setText("Default:" + GlobalVar.GOAL_DIRECTION + "\n" + 
+			"Heading:"+String.format("%.2f", mValues[0]));
+			
+			float newHeading = mValues[0];
+			float diff = newHeading-oldHeading;
+			if(diff>Math.PI) diff = diff - 2*(float)Math.PI;
+			if(diff<-Math.PI) diff = diff + 2*(float)Math.PI;
+			float avgHeading = oldHeading+diff/(float)MOVING_AVG_N;
+			GlobalVar.setHeading(avgHeading);
 			
 		}
 	}
