@@ -26,7 +26,6 @@ public class KookKaiDroidActivity extends Activity implements
 		SensorEventListener {
 	/** Called when the activity is first created. */
 
-	private final int FIELDVIEWHEIGHT = 300;
 	private final static int MOVING_AVG_N = 5;
 	CameraInterface cameraInterface;
 	MainlLoop main;
@@ -41,9 +40,6 @@ public class KookKaiDroidActivity extends Activity implements
 	
 	public static final String PATH = Environment
 			.getExternalStorageDirectory().getAbsolutePath();
-	private static final String MAGNETIC_MINMAX_FILE = "/SensorData/magnetic_minmax.txt";
-	private static final String MAGNETIC_MINMAX_NAME = PATH
-			+ MAGNETIC_MINMAX_FILE;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -118,7 +114,7 @@ public class KookKaiDroidActivity extends Activity implements
 		LinearLayout leftVerticalLayout = new LinearLayout(this);
 		leftVerticalLayout.setLayoutParams(new LayoutParams(
 				cameraInterface.frameHeight / 2,
-				cameraInterface.frameWidth / 1 ));
+				cameraInterface.frameWidth *2/ 3 ));
 		leftVerticalLayout.setOrientation(LinearLayout.VERTICAL);
 		leftVerticalLayout.addView(notSetGoalDirection);
 		leftVerticalLayout.addView(setGoalDirection);
@@ -130,8 +126,7 @@ public class KookKaiDroidActivity extends Activity implements
 
 		LinearLayout rightVerticalLayout = new LinearLayout(this);
 		rightVerticalLayout.setLayoutParams(new LayoutParams(
-				LayoutParams.MATCH_PARENT, FIELDVIEWHEIGHT
-						+ 150));
+				LayoutParams.MATCH_PARENT, 350));
 		rightVerticalLayout.setOrientation(LinearLayout.VERTICAL);
 		rightVerticalLayout.addView(cameraFrame);
 

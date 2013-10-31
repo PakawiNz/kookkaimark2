@@ -27,7 +27,6 @@ import com.example.udpfootballer.UDPServer;
 
 public class MainlLoop implements Runnable {
 	
-	private final static int UNDISTORT_PREVIEW_RATE_FACTOR = 12;
 	//TODO edit debug mode
 	public static final boolean DEBUGMODE = true;
 	
@@ -52,8 +51,6 @@ public class MainlLoop implements Runnable {
 	private KookKaiTwin twin;
 
 	private CheckBox drawColorCheck;
-	private int frameCounter = 0;
-	private int bestParWeight = 0;
 	
 	String stringUpdate="";
 	boolean needUpdate = false;
@@ -117,7 +114,6 @@ public class MainlLoop implements Runnable {
 		long timeStamp = System.currentTimeMillis();
 		// execute vision
 		debugImg.reset();//TODO find out why can't move to another place
-		//fieldView.reset();
 		
 		//Message Sent
 		if(GlobalVar.ballPos[2] > 0) 
