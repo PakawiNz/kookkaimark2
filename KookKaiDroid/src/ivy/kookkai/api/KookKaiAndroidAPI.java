@@ -353,7 +353,7 @@ public class KookKaiAndroidAPI {
 	 * 
 	 * try { int n = inSerial.read(readBuffer); readBuffer[n] = '\0';
 	 * 
-	 * } catch (IOException e) { // TODO Auto-generated catch block
+	 * } catch (IOException e) {
 	 * e.printStackTrace(); }
 	 * 
 	 * return readBuffer; }

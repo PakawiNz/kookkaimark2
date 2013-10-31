@@ -110,7 +110,6 @@ public class KookKaiDroidActivity extends Activity implements
 		cb.setText("draw color");
 		cb.setFocusable(false);
 
-		Log.d("frame", "button height:");// why can't get button height
 		LinearLayout leftVerticalLayout = new LinearLayout(this);
 		leftVerticalLayout.setLayoutParams(new LayoutParams(
 				cameraInterface.frameHeight / 2,
@@ -122,7 +121,6 @@ public class KookKaiDroidActivity extends Activity implements
 		leftVerticalLayout.addView(cb);
 
 		// Right Vertical Layout zone
-		FrameLayout fieldFrame = new FrameLayout(this);
 
 		LinearLayout rightVerticalLayout = new LinearLayout(this);
 		rightVerticalLayout.setLayoutParams(new LayoutParams(
@@ -147,8 +145,7 @@ public class KookKaiDroidActivity extends Activity implements
 		compassManager.registerListener(this,
 				sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
 				SensorManager.SENSOR_DELAY_NORMAL);
-		main = new MainlLoop(cameraInterface, debugImgview, 
-				debugText, cb);
+		main = new MainlLoop(cameraInterface, debugImgview, debugText, cb);
 	}
 
 	@Override

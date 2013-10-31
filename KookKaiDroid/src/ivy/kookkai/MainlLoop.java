@@ -27,9 +27,6 @@ import com.example.udpfootballer.UDPServer;
 
 public class MainlLoop implements Runnable {
 	
-	//TODO edit debug mode
-	public static final boolean DEBUGMODE = true;
-	
 	private final Handler handler = new Handler();
 	private CameraInterface camInterface;
 	private DebugImgView debugImg;
@@ -51,9 +48,6 @@ public class MainlLoop implements Runnable {
 	private KookKaiTwin twin;
 
 	private CheckBox drawColorCheck;
-	
-	String stringUpdate="";
-	boolean needUpdate = false;
 
 	public MainlLoop(CameraInterface cam, DebugImgView dimg,
 			TextView dtext, CheckBox drawColor
@@ -113,7 +107,7 @@ public class MainlLoop implements Runnable {
 	public void run() {
 		long timeStamp = System.currentTimeMillis();
 		// execute vision
-		debugImg.reset();//TODO find out why can't move to another place
+		debugImg.reset();
 		
 		//Message Sent
 		if(GlobalVar.ballPos[2] > 0) 
