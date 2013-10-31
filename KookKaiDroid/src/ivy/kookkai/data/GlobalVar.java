@@ -21,47 +21,56 @@ import android.util.Log;
 public final class GlobalVar {
 
 	public static final int KOOKKAI_MARK = 3;
+	
+	// object tag
+	public static final int BALL = 11;
+	public static final int GOAL = 12;
+	public static final int CYAN_BLOB = 13;
+	public static final int MAGENTA_BLOB = 14;
+
+	public static final int FRAME_HEIGHT = 640;
+	public static final int FRAME_WIDTH = 480;
+	public static final int REMAP_FACTOR = 8;// TODO find out why data of homo_8 // is incorrect
+	
 	public static float GOAL_DIRECTION = (float) (-1.2);// range from -PI
+	
+	public static final float HEADING_ERROR_RANGE = (float) Math.PI * 7 / 16;
+	// Accelerometer alignment at Homography calculation
+	// TODO need precise recalibration with measurement
+	// {(float)0.1,(float)8.2,(float)5.3};
+	
+	public static final double cameraFocalLength = 20;
+	public static final double Y_ALIGNMENT = 8.2;
+	public static final double THETA = Math.asin(Y_ALIGNMENT / 9.8);
+	public static final double CAMERA_HEIGHT = 41.5 / Math.sin(THETA);
+
+	public static final int oppTeamColor = MAGENTA_BLOB;
+	public static final int myTeamNumber = 0;
+	
+	public static final String comIP = "192.168.1.107";
+	public static final String twinIP = "192.168.1.123";
 
 	public static ArrayList<BlobObject> blobResult;
 	public static ArrayList<BlobObject> mergeResult;
-
-	// object tag
-	public final static int BALL = 11;
-	public final static int GOAL = 12;
-	public final static int CYAN_BLOB = 13;
-	public final static int MAGENTA_BLOB = 14;
-	public static int oppTeamColor = MAGENTA_BLOB;
-
-	public static int myTeamNumber = 0;
-	public static String comIP = "192.168.1.107";
-	public static String twinIP = "192.168.1.123";
-
-	public final static int FRAME_HEIGHT = 640;
-	public final static int FRAME_WIDTH = 480;
-	public final static int REMAP_FACTOR = 8;// TODO find out why data of homo_8
-												// // is incorrect
-
-	public static double cameraFocalLength = 20;
-
+	
 	// robot reference object position (x,y,available,size of blob)
 	// vision data, not considering of which side the goal is
 	// ball size, enemy size are used, goal size not used
 	public static double ballPos[] = new double[4];
 	public static double goalPos[] = new double[4];
+	
+	public static double goalPosL[] = new double[4];
+	public static double goalPosR[] = new double[4];
+	
 	public static double enemyPos[] = new double[4];
 
 	public static float heading = 0;// range from -PI to PI
 									// to PI!!
-	public static final float HEADING_ERROR_RANGE = (float) Math.PI * 7 / 16;
-	// Accelerometer alignment at Homography calculation
-	// TODO need precise recalibration with measurement
-	// {(float)0.1,(float)8.2,(float)5.3};
-	public static final double Y_ALIGNMENT = 8.2;
-	public static final double THETA = Math.asin(Y_ALIGNMENT / 9.8);
-	public static final double CAMERA_HEIGHT = 41.5 / Math.sin(THETA);
-
+	
 	public static void setHeading(float heading) {
+		float h = heading;
+		while(h>Math.PI) h-=2*(float)Math.PI;
+		while(h<Math.PI) h+=2*(float)Math.PI;
 		GlobalVar.heading = heading;
 	}
 
@@ -70,24 +79,19 @@ public final class GlobalVar {
 		float error = heading - GOAL_DIRECTION;
 		if (error >= 0) {
 			if (error <= HEADING_ERROR_RANGE) {
-				Log.d("global_isgoal", "yes");
 				return true;
 			}
 			if (2 * Math.PI - error <= HEADING_ERROR_RANGE) {
-				Log.d("global_isgoal", "yes");
 				return true;
 			}
 		} else {
 			if (-HEADING_ERROR_RANGE < error) {
-				Log.d("global_isgoal", "yes");
 				return true;
 			}
 			if (2 * Math.PI + error <= HEADING_ERROR_RANGE) {
-				Log.d("global_isgoal", "yes");
 				return true;
 			}
 		}
-		Log.d("global_isgoal", "no");
 		return false;
 
 	}

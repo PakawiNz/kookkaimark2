@@ -3,10 +3,6 @@ package ivy.kookkai;
 import ivy.kookkai.data.GlobalVar;
 import ivy.kookkai.debugview.CameraInterface;
 import ivy.kookkai.debugview.DebugImgView;
-import ivy.kookkai.debugview.FieldView;
-import ivy.kookkai.debugview.HomographyPointsView;
-import ivy.kookkai.debugview.LocalizationView;
-import ivy.kookkai.debugview.UndistortView;
 import android.app.Activity;
 import android.content.Context;
 import android.hardware.Sensor;
@@ -135,7 +131,7 @@ public class KookKaiDroidActivity extends Activity implements
 		LinearLayout rightVerticalLayout = new LinearLayout(this);
 		rightVerticalLayout.setLayoutParams(new LayoutParams(
 				LayoutParams.MATCH_PARENT, FIELDVIEWHEIGHT
-						+ UndistortView.VIEWHEIGHT));
+						+ 150));
 		rightVerticalLayout.setOrientation(LinearLayout.VERTICAL);
 		rightVerticalLayout.addView(cameraFrame);
 

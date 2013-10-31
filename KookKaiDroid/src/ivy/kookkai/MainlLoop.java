@@ -6,16 +6,11 @@ import ivy.kookkai.api.KookKaiAndroidAPI;
 import ivy.kookkai.data.GlobalVar;
 import ivy.kookkai.debugview.CameraInterface;
 import ivy.kookkai.debugview.DebugImgView;
-import ivy.kookkai.debugview.HomographyPointsView;
-import ivy.kookkai.debugview.LocalizationView;
-import ivy.kookkai.debugview.UndistortView;
-import ivy.kookkai.localization.Localization;
 import ivy.kookkai.refbox.Constants;
 import ivy.kookkai.refbox.GameControllerClient;
 import ivy.kookkai.refbox.GameData;
 import ivy.kookkai.refbox.KookKaiTeamInfo;
 import ivy.kookkai.vision.Blob;
-import ivy.kookkai.vision.ColorManager;
 import ivy.kookkai.vision.MapBlob;
 import android.graphics.Color;
 import android.os.Handler;
@@ -39,9 +34,6 @@ public class MainlLoop implements Runnable {
 	private final Handler handler = new Handler();
 	private CameraInterface camInterface;
 	private DebugImgView debugImg;
-	private LocalizationView local;
-	private UndistortView undistort;
-	private HomographyPointsView homography;
 	private boolean running;
 	
 	private TextView debugText;
@@ -49,7 +41,6 @@ public class MainlLoop implements Runnable {
 	private Blob visionBlob;
 	private KookKaiAndroidAPI robotAPI;
 	private MapBlob mapBlob;
-	private Localization localization;
 	
 	private AITemplate ai;
 	private GameControllerClient gameClient;
