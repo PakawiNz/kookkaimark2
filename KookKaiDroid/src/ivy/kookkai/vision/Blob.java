@@ -61,15 +61,18 @@ public class Blob {
 		int y, cr, cb;
 		int i, j, k;
 		
-		boolean foundGreen;																							
+		boolean foundGreen;		
+		boolean foundDarkGreen;	
+		int firstDarkgreen = 0;
+		int lastDarkgreen = 0;
 		
 		int w2 = width * 2;
 		int w4 = width * 4;
 		for (i = 0; i < width; i++) {
 			foundGreen = false;
+			foundDarkGreen = false;
 			convexL[i] = width;
 			convexR[i] = 0;
-			
 			for (j = i * 2 + w2 * (height - 1), k = i * 2 + w4 * (height - 1); j >= 0; j -= w2, k -= w4, outIndex++) {
 				cr = (int) img[j] & 0xff;
 				cb = (int) img[j + 1] & 0xff;
@@ -84,12 +87,34 @@ public class Blob {
 						colorData[outIndex] = ColorManager.BLACK;
 				}
 				
-				if(colorData[outIndex] == ColorManager.GREEN){
-					if(!foundGreen) {
-						convexL[i] = outIndex;
-						foundGreen = true;
+				/** CONVEX HULL MAKING */
+				
+				if(colorData[outIndex] == ColorManager.DARKGREEN){
+					if(!foundDarkGreen) {
+						firstDarkgreen = outIndex;
+						foundDarkGreen = true;
 					}
-					convexR[i] = outIndex;
+					
+					if(foundGreen && convexR[i] == outIndex - 1){
+						convexR[i] = outIndex;
+						colorData[outIndex] = ColorManager.GREEN;
+					}
+				} else {
+					if(colorData[outIndex] == ColorManager.GREEN){
+						if(!foundGreen) {
+							if(foundDarkGreen) {
+								convexL[i] = firstDarkgreen;
+								for(int a = firstDarkgreen; a < outIndex ; a++){
+									colorData[outIndex] = ColorManager.GREEN;
+								}
+							} else {
+								convexL[i] = outIndex;
+							}
+							foundGreen = true;
+						}
+						convexR[i] = outIndex;
+					}
+					foundDarkGreen = false;
 				}
 			}
 		}	
@@ -106,7 +131,6 @@ public class Blob {
 		
 		for (int i = 0; i < width; i++) {
 			for(int j = 0; j < height ; j++){
-				
 				// GREEN should be a defined color, but should not count as a blob
 				if (convexL[i] < outIndex && outIndex < convexR[i]) {
 					if(	colorData[outIndex] != ColorManager.UNDEFINE && (
@@ -126,19 +150,17 @@ public class Blob {
 			}
 		}
 		
-		outIndex = 0;
-		
-		for (int i = 0; i < width; i++) {
-			for(int j = 0; j < height ; j++){
-				if (convexL[i] < outIndex && outIndex < convexR[i]){
-					
-				}
-				outIndex++;
-			}
-		}
+//		outIndex = 0;
+//		for (int i = 0; i < width; i++) {
+//			for(int j = 0; j < height ; j++){
+//				if (convexL[i] < outIndex && outIndex < convexR[i]){
+//					colorData[outIndex] = ColorManager.MAGENTA;
+//				}
+//				outIndex++;
+//			}
+//		}
 		
 		// can't move to debugImgView coz vision blob will execute painting
-		
 		if (drawcolor) {
 			outIndex = 0;
 			for (int i = 0; i < width; i++) {
@@ -150,9 +172,7 @@ public class Blob {
 	}
 
 	private BlobObject fillBlob(int pos) {
-		
 		qx[0] = pos;
-
 		byte baseColor = getPixel(pos);
 		int minX = pos % dataWidth, maxX = pos % dataWidth;
 		int minY = pos / dataWidth, maxY = pos / dataWidth;
@@ -163,7 +183,6 @@ public class Blob {
 		setPixel(pos, (byte) 0);
 
 		for (int i = 0; i < pixelCount; i++) {
-			
 			curX = qx[i] % dataWidth;
 			curY = qx[i] / dataWidth;
 			curPos = qx[i];
