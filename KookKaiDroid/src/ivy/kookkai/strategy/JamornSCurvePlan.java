@@ -1,15 +1,15 @@
-package kookkai.strategy;
+package ivy.kookkai.strategy;
 
-import ivy.kookkai.ai.PakawiNz_AI;
 import ivy.kookkai.data.GlobalVar;
+import ivy.kookkai.movement.JamornSCurve;
 import ivy.kookkai.vision.BlobObject;
 
 import com.example.udpfootballer.UDPClient;
 
-public class PaiBaseSCurve implements StrategyTemplate{
+public class JamornSCurvePlan implements StrategyTemplate{
 	UDPClient messenger;
 	int state;
-	PakawiNz_AI player;
+	JamornSCurve player;
 	
 	String out;
 	
@@ -18,7 +18,7 @@ public class PaiBaseSCurve implements StrategyTemplate{
 	double lkpp_x, lkpp_y;
 
 	
-	public PaiBaseSCurve(PakawiNz_AI player) {
+	public JamornSCurvePlan(JamornSCurve player) {
 		this.player = player;
 		this.state = 0;
 		messenger = new UDPClient(8324);
@@ -30,11 +30,6 @@ public class PaiBaseSCurve implements StrategyTemplate{
 		double min_y = 1000;
 		boolean foundPole = false;
 		for(BlobObject b : GlobalVar.mergeResult) {
-			/*out += "Rectangle Position : " + b.posRect + "\n";
-			out += "Centroid Position : " + b.centroidX + "\n";
-			out += "PixelCount : " + b.pixelCount + "\n";
-			out += "Tag : " + b.tag + "\n";
-			out += "\n";*/
 			if(b.posRect.exactCenterY() < min_y) {
 				min_x = b.posRect.exactCenterX();
 				min_y = b.posRect.exactCenterY();
@@ -63,16 +58,12 @@ public class PaiBaseSCurve implements StrategyTemplate{
 		out += "[Start]\n";
 		out += "[End]\n";
 		poleCheck();
-		switch(state) {
+		/*switch(state) {
+		 *	//start
 			case 0: {
-				if(nearestPoleOnLeft) {
-					player.goAroundRightFaceLeft();
-					out += "goAroundRight - FaceLeft\n";
-					break;
-				}
-				state += 1;
-				break;
+				
 			}
+			//pass first pole
 			case 1: {
 				if(nearestPoleOnRight) {
 					player.goAroundLeftFaceRight();
@@ -81,10 +72,11 @@ public class PaiBaseSCurve implements StrategyTemplate{
 				}
 				state += 1;
 			}
+			//pass second pole
 			case 2: {
 				player.goStraight();
 			}
-		}
+		}*/
 		
 		messenger.sendMessage(out);
 		return out;
