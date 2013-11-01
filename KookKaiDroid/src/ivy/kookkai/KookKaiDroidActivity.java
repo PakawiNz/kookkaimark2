@@ -3,7 +3,7 @@ package ivy.kookkai;
 import ivy.kookkai.data.GlobalVar;
 import ivy.kookkai.debugview.CameraInterface;
 import ivy.kookkai.debugview.DebugImgView;
-import ivy.kookkai.vision.SensorActivity;
+import ivy.kookkai.vision.SensorInterface;
 import android.app.Activity;
 import android.content.Context;
 import android.hardware.Sensor;
@@ -28,11 +28,12 @@ public class KookKaiDroidActivity extends Activity {
 	/** Called when the activity is first created. */
 
 	CameraInterface cameraInterface;
+	SensorInterface sensorInterface;
+	
 	MainlLoop main;
 	DebugImgView debugImgview;
 	TextView debugText, headingText;
 	Context mContext;
-	SensorActivity sensor;
 	CheckBox drawColor;
 
 	public static final String PATH = Environment.getExternalStorageDirectory().getAbsolutePath();
@@ -46,23 +47,24 @@ public class KookKaiDroidActivity extends Activity {
 		Log.d("ivy_debug", "start!!!");
 
 		mContext = this.getApplicationContext();
+		
+		cameraInterface = new CameraInterface(this);
+		sensorInterface = new SensorInterface(this);
 
 		createGUI();
 
 		headingText = (TextView) findViewById(R.id.headingText);
 		debugText = (TextView) findViewById(R.id.debugText);
 
-		sensor = new SensorActivity(this, headingText);
-		main = new MainlLoop(cameraInterface, debugImgview, debugText, drawColor);
+		main = new MainlLoop(cameraInterface, sensorInterface, debugImgview, debugText, drawColor);
 	}
 
 	private void createGUI() {
 		LinearLayout rootHorizontalLayout = (LinearLayout) findViewById(R.id.upper_view);
 
 		// Left Vertical Layout zone
-		cameraInterface = new CameraInterface(this);
 		cameraInterface.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-
+		
 		debugImgview = new DebugImgView(this);
 		debugImgview.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
@@ -80,7 +82,7 @@ public class KookKaiDroidActivity extends Activity {
 		setGoalDirection.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				GlobalVar.GOAL_DIRECTION = sensor.mValues[0];
+				sensorInterface.setCurrentToGoalDirection();
 				setGoalDirection.setVisibility(View.GONE);
 				notSetGoalDirection.setVisibility(View.GONE);
 			}

@@ -9,10 +9,6 @@ public class BlobAnalyser {
 	
 	private static final double filterRatio = 0.2;
 	
-	public BlobAnalyser(){
-		
-	}
-	
 	public String execute(){
 		GlobalVar.ballPos[2] = -1;
 		GlobalVar.goalPosL[2] = -1;

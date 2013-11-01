@@ -1,6 +1,6 @@
 package ivy.kookkai.data;
 
-import ivy.kookkai.ai.FetchBall;
+import ivy.kookkai.movement.MovementTemplate;
 import ivy.kookkai.refbox.Constants;
 import ivy.kookkai.refbox.GameData;
 import ivy.kookkai.refbox.KookKaiTeamInfo;
@@ -55,7 +55,7 @@ public final class GlobalVar {
 
 	public static GameData gameData;
 	
-	public static boolean isFalling;
+	public static int falling_state;
 	public static boolean isGoalDirection;
 
 	public static void initVar() {
@@ -63,7 +63,7 @@ public final class GlobalVar {
 		ColorManager.initVar();
 	}
 
-	public static boolean committeeAllowMeToPlay(FetchBall fetcher) {
+	public static boolean committeeAllowMeToPlay(MovementTemplate movement) {
 		if (GlobalVar.gameData.teams[0].teamNumber == 1) {
 			// teaminfo = GlobalVar.gameData.teams[0];
 			KookKaiTeamInfo.getInstance().setTeamInfo(0);
@@ -95,10 +95,10 @@ public final class GlobalVar {
 						return false;
 					}
 					if (GlobalVar.myTeamNumber == 1) {
-						fetcher.walkToSetupPosition();
+						movement.walkToSetupPosition();
 					}
 					if (GlobalVar.myTeamNumber == 2) {
-						fetcher.walkToSetupPosition();
+						movement.walkToSetupPosition();
 					}
 				} else if (GlobalVar.gameData.state == Constants.STATE_PLAYING) {
 					if (KookKaiTeamInfo.getInstance().getTeamInfo().player[GlobalVar.myTeamNumber].penalty != Constants.PENALTY_NONE) {
@@ -127,10 +127,10 @@ public final class GlobalVar {
 						return false;
 					}
 					if (GlobalVar.myTeamNumber == 1) {
-						fetcher.walkToSetupPosition();
+						movement.walkToSetupPosition();
 					}
 					if (GlobalVar.myTeamNumber == 2) {
-						fetcher.walkToSetupPosition();
+						movement.walkToSetupPosition();
 					}
 				} else if (GlobalVar.gameData.state == Constants.STATE_PLAYING) {
 					if (KookKaiTeamInfo.getInstance().getTeamInfo().player[GlobalVar.myTeamNumber].penalty != Constants.PENALTY_NONE) {
@@ -159,10 +159,10 @@ public final class GlobalVar {
 						return false;
 					}
 					if (GlobalVar.myTeamNumber == 1) {
-						fetcher.walkToSetupPosition();
+						movement.walkToSetupPosition();
 					}
 					if (GlobalVar.myTeamNumber == 2) {
-						fetcher.walkToSetupPosition();
+						movement.walkToSetupPosition();
 					}
 				} else if (GlobalVar.gameData.state == Constants.STATE_PLAYING) {
 					if (KookKaiTeamInfo.getInstance().getTeamInfo().player[GlobalVar.myTeamNumber].penalty != Constants.PENALTY_NONE) {
@@ -196,10 +196,10 @@ public final class GlobalVar {
 						return false;
 					}
 					if (GlobalVar.myTeamNumber == 1) {
-						fetcher.walkToSetupPosition();
+						movement.walkToSetupPosition();
 					}
 					if (GlobalVar.myTeamNumber == 2) {
-						fetcher.walkToSetupPosition();
+						movement.walkToSetupPosition();
 					}
 				} else if (GlobalVar.gameData.state == Constants.STATE_PLAYING) {
 					if (KookKaiTeamInfo.getInstance().getTeamInfo().player[GlobalVar.myTeamNumber].penalty != Constants.PENALTY_NONE) {
@@ -230,10 +230,10 @@ public final class GlobalVar {
 						return false;
 					}
 					if (GlobalVar.myTeamNumber == 1) {
-						fetcher.walkToSetupPosition();
+						movement.walkToSetupPosition();
 					}
 					if (GlobalVar.myTeamNumber == 2) {
-						fetcher.walkToSetupPosition();
+						movement.walkToSetupPosition();
 					}
 				} else if (GlobalVar.gameData.state == Constants.STATE_PLAYING) {
 					if (KookKaiTeamInfo.getInstance().getTeamInfo().player[GlobalVar.myTeamNumber].penalty != Constants.PENALTY_NONE) {

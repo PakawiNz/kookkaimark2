@@ -1,60 +1,56 @@
-package ivy.kookkai.ai;
+package ivy.kookkai.movement;
 
-import ivy.kookkai.ai.AITemplate;
 import ivy.kookkai.api.KookKaiAndroidAPI;
 import ivy.kookkai.data.GlobalVar;
+import ivy.kookkai.movement.MovementTemplate;
 import ivy.kookkai.strategy.ChampStateFull;
 import ivy.kookkai.strategy.StrategyTemplate;
+import ivy.kookkai.vision.SensorInterface;
 
-public class PakawiNz_AI implements AITemplate {
+public class PakawiNz_Movement implements MovementTemplate {
 
-	private double fallCounter = 0;	
+	private static final int BallX_CENTER = 0;
+	private static final int BallX_TRESH = 50;
+	private static final int GoalX_CENTER = 0;
+	private static final int GoalX_TRESH = 35;
 	
-	private StrategyTemplate strategy;
-	public KookKaiAndroidAPI api;
-	
-	private String out = "";
-	
-	public PakawiNz_AI(KookKaiAndroidAPI api) {
-		this.api = api;
-		this.strategy = new ChampStateFull(this);
-	}
-	
-	private final int BallX_CENTER = 0;
-	private final int BallX_TRESH = 50;
-	private final int GoalX_CENTER = 0;
-	private final int GoalX_TRESH = 35;
-	
-	private final int onLEFT = -1;
-	private final int onCENTER = 0;
-	private final int onRIGHT = 1;
+	private static final int OnLEFT = -1;
+	private static final int OnCENTER = 0;
+	private static final int OnRIGHT = 1;
 	
 	private int ballState = 0;
 	private int goalState = 0;
 	
-	//-------------------------------->> STATE HANDLING <<--------------------------------//
+	private String out = "";
+	private KookKaiAndroidAPI api;
 	
-	public void updateCurrentState(){
+	public PakawiNz_Movement(KookKaiAndroidAPI api) {
+		this.api = api;
+	}
+	
+	//-------------------------------->> STATE HANDLING <<--------------------------------//
+
+	private void updateCurrentState(){
 		
 		if(GlobalVar.ballPos[0] - BallX_CENTER < -BallX_TRESH){
-			ballState = onLEFT;
+			ballState = OnLEFT;
 		}else if(GlobalVar.ballPos[0] - BallX_CENTER > BallX_TRESH){
-			ballState = onRIGHT;
+			ballState = OnRIGHT;
 		}else {
-			ballState = onCENTER;
+			ballState = OnCENTER;
 		}
 		
 		if(GlobalVar.goalPos[0] - GoalX_CENTER < -GoalX_TRESH){
-			goalState = onLEFT;
+			goalState = OnLEFT;
 		}else if(GlobalVar.goalPos[0] - GoalX_CENTER > GoalX_TRESH){
-			goalState = onRIGHT;
+			goalState = OnRIGHT;
 		}else {
-			goalState = onCENTER;
+			goalState = OnCENTER;
 		}
 		
 	}
 	
-	public void updateFineBallState(){
+	private void updateFineBallState(){
 		
 //		if(GlobalVar.ballPos[0] - BallX_CENTER < -2){
 //			ballState = onLEFT;
@@ -65,11 +61,11 @@ public class PakawiNz_AI implements AITemplate {
 //		}
 		
 		if(GlobalVar.ballPos[0] - BallX_CENTER < -20){
-			ballState = onLEFT;
+			ballState = OnLEFT;
 		}else if(GlobalVar.ballPos[0] - BallX_CENTER > 20){
-			ballState = onRIGHT;
+			ballState = OnRIGHT;
 		}else {
-			ballState = onCENTER;
+			ballState = OnCENTER;
 		}
 	}
 	
@@ -128,33 +124,35 @@ public class PakawiNz_AI implements AITemplate {
 		api.walkingNonLimit(0, 10, -20);
 	}
 	
-	//-------------------------------->> MOVEMENT HANDLING <<--------------------------------//
+	//-------------------------------->> MOVEMENT COMMAND <<--------------------------------//
 	
 	public void findBall() {
+		updateCurrentState();
 		out += "FINDBALL > ";
-		if(ballState == onLEFT){
+		if(ballState == OnLEFT){
 			rotateLeft();
-		}else if(ballState == onRIGHT){
+		}else if(ballState == OnRIGHT){
 			rotateRight();
-		}else if(ballState == onCENTER){
+		}else if(ballState == OnCENTER){
 			goStraight();
 		}
 	}
 
 	public void trackBall() {
+		updateCurrentState();
 		out += "TRACKBALL > ";
-		if(ballState == onLEFT){
+		if(ballState == OnLEFT){
 			//folllowLeft();
 			rotateLeft();
-		}else if(ballState == onRIGHT){
+		}else if(ballState == OnRIGHT){
 			//followRight();
 			rotateRight();
-		}else if(ballState == onCENTER){
+		}else if(ballState == OnCENTER){
 			goStraight();
 		}
 	}
 	
-	public void runToBall() {
+	public void walkToBall() {
 		out += "RUN TO BALL > ";
 		goSlow();
 	}
@@ -170,6 +168,10 @@ public class PakawiNz_AI implements AITemplate {
 		//goStraight();
 	}
 	
+	public void walkToSetupPosition() {
+		goStraight();
+	}
+	
 	public void changeDirection() {
 		out += "CHANGE DIRECTION > ";
 		//api.playSaveMotion(2);
@@ -179,17 +181,17 @@ public class PakawiNz_AI implements AITemplate {
 	public int prepareKick() {
 		out += "Prepare!!\n";
 		updateFineBallState();
-		if(ballState == onLEFT){
+		if(ballState == OnLEFT){
 			rotateLeft();
-		}else if(ballState == onRIGHT){
+		}else if(ballState == OnRIGHT){
 			rotateRight();
 		}else {
-			if(goalState == onLEFT){
+			if(goalState == OnLEFT){
 				slideRight();
-			}else if(goalState == onRIGHT){
+			}else if(goalState == OnRIGHT){
 				slideLeft();
 			} else {
-				if(GlobalVar.isCorrectDirection()){
+				if(GlobalVar.isGoalDirection){
 					return 1;
 				}else{
 					return -1;
@@ -231,52 +233,22 @@ public class PakawiNz_AI implements AITemplate {
 		return 0;
 	}
 
-	//-------------------------------->> FALLING HANDLING <<--------------------------------//
-	
-	public void startGettingUp() {
-		// if robot is detected in falldown stage in a period of time will
-		// call stand up motion.
-		out += "Getting Up!!\n";
-		if (fallCounter < 7)
-			fallCounter++;// original = 20
-		else {
-			if (GlobalVar.ay < 0) { // stand up from front-down position.
-				api.playSaveMotion(1); // flip
-				api.playSaveMotion(0); // stand up
-			} else { // stand up from back-down position.
-				api.playSaveMotion(0); // stand up
-			}
-			fallCounter = 0;
-		}	
+	public void standingUp() {
+		if(GlobalVar.falling_state != SensorInterface.FALL_FACEUP){
+			api.playSaveMotion(0); // stand up
+		}if(GlobalVar.falling_state != SensorInterface.FALL_FACEDOWN){
+			api.playSaveMotion(1); // flip
+			api.playSaveMotion(0); // stand up
+		}
 	}
 
-	public void resetFallCounter() {
-		fallCounter = 0;
-	}
-
-	//-------------------------------->> CONTROL <<--------------------------------//
-	
 	public void forceReady() {
 		api.ready();
 	}
 	
-	public String execute() {
-		
+	public String getMSG() {
+		String a = out;
 		out = "";
-		out += "\n";
-		out += "GOAL L POSITION" + GlobalVar.goalPosL[0] + "\n";
-		out += "GOAL L Y" + GlobalVar.goalPosL[1] + "\n";
-		out += "GOAL R POSITION" + GlobalVar.goalPosR[0] + "\n";
-		out += "GOAL R Y" + GlobalVar.goalPosR[1] + "\n";
-		out += "BALL POSITION" + GlobalVar.ballPos[0] + "\n";
-		out += "BALL Y " + GlobalVar.ballPos[1] + "\n";
-		out += "BALL SIZE " + GlobalVar.ballPos[2] + "\n";
-		out += "\n";
-		String x =  strategy.run();
-		
-//		if(!x.equals("LOCK  "))
-//			Log.d("pakawinz_debug",out + x);
-
-		return out + x;
+		return a;
 	}
 }
