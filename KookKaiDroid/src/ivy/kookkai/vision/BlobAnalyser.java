@@ -31,6 +31,17 @@ public class BlobAnalyser {
 			}
 		}
 		
+		blob = goals.get(goals.size() - 1);
+		for (BlobObject b : goals){
+			if(b.posRect.bottom > blob.posRect.bottom){
+				blob = b;
+			}
+		}
+		
+		GlobalVar.pillarPos[0] = blob.posRect.centerX() - GlobalVar.frameWidth / 2;
+		GlobalVar.pillarPos[1] = GlobalVar.frameHeight - blob.posRect.bottom;
+		GlobalVar.pillarPos[2] = blob.getSize();
+		
 		if(goals.size() > 0){
 			int minimumFragmentSize = (int)(filterRatio * goals.get(goals.size()-1).getSize());
 			while(goals.get(0).getSize() < minimumFragmentSize){

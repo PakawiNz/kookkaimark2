@@ -37,8 +37,9 @@ public final class GlobalVar {
 	// robot reference object position (x,y,available,size of blob)
 	// vision data, not considering of which side the goal is
 	// ball size, enemy size are used, goal size not used
+	
 	public static double ballPos[] = new double[4];
-	public static double goalPos[] = new double[4];
+	public static double pillarPos[] = new double[4];
 	
 	public static double goalPosL[] = new double[4];
 	public static double goalPosR[] = new double[4];

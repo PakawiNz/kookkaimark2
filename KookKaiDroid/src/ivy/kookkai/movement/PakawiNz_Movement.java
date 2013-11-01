@@ -1,5 +1,6 @@
 package ivy.kookkai.movement;
 
+import android.R.bool;
 import ivy.kookkai.api.KookKaiAndroidAPI;
 import ivy.kookkai.data.GlobalVar;
 import ivy.kookkai.movement.MovementTemplate;
@@ -14,12 +15,14 @@ public class PakawiNz_Movement implements MovementTemplate {
 	private static final int GoalX_CENTER = 0;
 	private static final int GoalX_TRESH = 35;
 	
-	private static final int OnLEFT = -1;
-	private static final int OnCENTER = 0;
-	private static final int OnRIGHT = 1;
+	private static final int OnLEFT = 1;
+	private static final int OnCENTER = 2;
+	private static final int OnRIGHT = 3;
+	private static final int OnWHERE = 0;
 	
 	private int ballState = 0;
-	private int goalState = 0;
+	private int goalLState = 0;
+	private int goalRState = 0;
 	
 	private String out = "";
 	private KookKaiAndroidAPI api;
@@ -40,33 +43,30 @@ public class PakawiNz_Movement implements MovementTemplate {
 			ballState = OnCENTER;
 		}
 		
-		if(GlobalVar.goalPos[0] - GoalX_CENTER < -GoalX_TRESH){
-			goalState = OnLEFT;
-		}else if(GlobalVar.goalPos[0] - GoalX_CENTER > GoalX_TRESH){
-			goalState = OnRIGHT;
+		if(GlobalVar.goalPosL[0] - GoalX_CENTER < -GoalX_TRESH){
+			goalLState = OnLEFT;
+		}else if(GlobalVar.goalPosL[0] - GoalX_CENTER > GoalX_TRESH){
+			goalLState = OnRIGHT;
 		}else {
-			goalState = OnCENTER;
+			goalLState = OnCENTER;
+		}
+		
+		if(GlobalVar.goalPosR[0] - GoalX_CENTER < -GoalX_TRESH){
+			goalRState = OnLEFT;
+		}else if(GlobalVar.goalPosR[0] - GoalX_CENTER > GoalX_TRESH){
+			goalRState = OnRIGHT;
+		}else {
+			goalRState = OnCENTER;
 		}
 		
 	}
 	
-	private void updateFineBallState(){
-		
-//		if(GlobalVar.ballPos[0] - BallX_CENTER < -2){
-//			ballState = onLEFT;
-//		}else if(GlobalVar.ballPos[0] - BallX_CENTER > 15){
-//			ballState = onRIGHT;
-//		}else {
-//			ballState = onCENTER;
-//		}
-		
-		if(GlobalVar.ballPos[0] - BallX_CENTER < -20){
-			ballState = OnLEFT;
-		}else if(GlobalVar.ballPos[0] - BallX_CENTER > 20){
-			ballState = OnRIGHT;
-		}else {
-			ballState = OnCENTER;
-		}
+	private boolean isGoalLeftFound(){
+		return GlobalVar.goalPosL[2] > 0;
+	}
+	
+	private boolean isGoalRightFound(){
+		return GlobalVar.goalPosR[2] > 0;
 	}
 	
 	//-------------------------------->> WALKING HANDLING <<--------------------------------//
@@ -180,56 +180,7 @@ public class PakawiNz_Movement implements MovementTemplate {
 	
 	public int prepareKick() {
 		out += "Prepare!!\n";
-		updateFineBallState();
-		if(ballState == OnLEFT){
-			rotateLeft();
-		}else if(ballState == OnRIGHT){
-			rotateRight();
-		}else {
-			if(goalState == OnLEFT){
-				slideRight();
-			}else if(goalState == OnRIGHT){
-				slideLeft();
-			} else {
-				if(GlobalVar.isGoalDirection){
-					return 1;
-				}else{
-					return -1;
-				}
-			}
-		}
 		
-//		if(goalState == onLEFT){
-//			if(ballState == onLEFT){
-//				rotateLeft();
-//			}else if(ballState == onRIGHT){
-//				rotateRight();
-//			}else if(ballState == onCENTER){
-//				//alignLeft();
-//				slideRight();
-//			}
-//		}else if(goalState == onRIGHT){
-//			if(ballState == onLEFT){
-//				rotateLeft();
-//			}else if(ballState == onRIGHT){
-//				rotateRight();
-//			}else if(ballState == onCENTER){
-//				//alignRight();
-//				slideLeft();
-//			}
-//		} else {
-//			if(GlobalVar.isGoalDirection()){
-//				if(ballState == onLEFT){
-//					rotateLeft();
-//				}else if(ballState == onRIGHT){
-//					rotateRight();
-//				}else if(ballState == onCENTER){
-//					return 1;
-//				}
-//			}else{
-//				return -1;
-//			}
-//		}
 		return 0;
 	}
 
