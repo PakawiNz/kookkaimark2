@@ -28,6 +28,8 @@ public class ChampStateFull implements StrategyTemplate {
 	private String out = "";
 	private double fallCounter = 0;	
 	
+	private int macuState = 0;
+	
 	public ChampStateFull(MovementTemplate movement) {
 		this.movement = movement;
 	}
@@ -59,15 +61,20 @@ public class ChampStateFull implements StrategyTemplate {
 		}
 		if (GlobalVar.ballPos[2] > 0) {
 			if (GlobalVar.ballPos[1] < 100) {
-				int readyToKick = movement.prepareKick();
-				if (readyToKick == 1) {
-					movement.playBall();
-					lock(600);
-				} else if (readyToKick == -1) {
-					movement.changeDirection();
-					lock(10000);
-				} else {
-					lock(300);
+				if(GlobalVar.ballPos[1] < 20){
+					int readyToKick = movement.prepareKick();
+					if (readyToKick == 1) {
+						movement.playBall();
+						lock(600);
+					} else if (readyToKick == -1) {
+						movement.changeDirection();
+						lock(10000);
+					} else {
+						lock(300);
+					}
+				}else{
+					movement.walkToBall();
+					lock(100);
 				}
 			} else {
 				movement.findBall();

@@ -8,6 +8,25 @@ import ivy.kookkai.data.GlobalVar;
 public class BlobAnalyser {
 	
 	private static final double filterRatio = 0.2;
+	private static final double intersectRatio = 0.7;
+	private static final int ballCut = 20;
+	
+	private boolean yellowInBall(BlobObject yellow,BlobObject ball){
+		int left = Math.max(yellow.posRect.left,ball.posRect.left);
+		int right = Math.min(yellow.posRect.right,ball.posRect.right);
+		int top = Math.max(yellow.posRect.top,ball.posRect.top);
+		int bottom = Math.min(yellow.posRect.bottom,ball.posRect.bottom);
+		
+		float w = right - left;
+		float h = bottom - top;
+		
+		float percentage = w * h / (float)yellow.getSize();
+		
+		Log.d("blobAnalyse","Intersect " + percentage + "\n");
+		
+		if(w < 0 || h < 0) return false;
+		return percentage > intersectRatio;
+	}
 	
 	public String execute(){
 		GlobalVar.ballPos[2] = -1;
@@ -16,12 +35,13 @@ public class BlobAnalyser {
 		GlobalVar.polePos[2] = -1;
 		
 		ArrayList<BlobObject> goals = new ArrayList<BlobObject>();
-		BlobObject blob;
+		BlobObject blob ,ball = null;
 		
 		for (int i = 0; i < GlobalVar.mergeResult.size(); i++) {
 			blob = GlobalVar.mergeResult.get(i);
 			switch (blob.tag) {
 			case GlobalVar.BALL :
+				ball = blob;
 				GlobalVar.ballPos[0] = blob.posRect.centerX() - GlobalVar.frameWidth / 2;
 				GlobalVar.ballPos[1] = GlobalVar.frameHeight - blob.posRect.bottom;
 				GlobalVar.ballPos[2] = blob.getSize();
@@ -32,24 +52,41 @@ public class BlobAnalyser {
 			}
 		}
 		
-		if(goals.size() != 0) {
+		if(goals.size() > 0){
+		
+			int minimumFragmentSize = (int)(filterRatio * goals.get(goals.size()-1).getSize());
 			blob = goals.get(goals.size() - 1);
-			for (BlobObject b : goals){
+			
+			for( int i = 0; i < goals.size(); i++){
+				BlobObject b = goals.get(i);
 				if(b.posRect.bottom > blob.posRect.bottom){
 					blob = b;
 				}
+				if(goals.get(i).getSize() < minimumFragmentSize) {
+					Log.d("blobAnalyse","Too small Fragment\n");
+					goals.remove(i);
+					i--;
+				} else if(ball != null) {
+					if(b.posRect.bottom - ball.posRect.bottom > ballCut) {
+						Log.d("blobAnalyse","GOAL BEFORE BALL\n");
+						goals.remove(i);
+						i--;
+					}else {
+						if(yellowInBall(b, ball)){
+							goals.remove(i);
+							i--;
+						}
+					}
+				}
+				if(ball != null && yellowInBall(b, ball)){
+					GlobalVar.blobResult.remove(b);
+					GlobalVar.mergeResult.remove(b);
+				}
 			}
+			
 			GlobalVar.polePos[0] = blob.posRect.centerX() - GlobalVar.frameWidth / 2;
 			GlobalVar.polePos[1] = GlobalVar.frameHeight - blob.posRect.bottom;
 			GlobalVar.polePos[2] = blob.getSize();
-		}
-		
-
-		if(goals.size() > 0){
-			int minimumFragmentSize = (int)(filterRatio * goals.get(goals.size()-1).getSize());
-			while(goals.get(0).getSize() < minimumFragmentSize){
-				goals.remove(0);
-			}
 		}
 
 		if(goals.size() == 2){

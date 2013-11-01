@@ -12,6 +12,8 @@ public class Blob {
 	private static final int jumpAllowance = 60;
 	private static final int minimumGreen = 20;
 	
+	private static final int cutTop = 75;
+	
 	private static final int cameraCentroidY = 10;
 	private static final int cameraRad = 140;
 	
@@ -129,9 +131,12 @@ public class Blob {
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++, outIndex++) {
 				
-				if(!(convexL[i] < outIndex && outIndex < convexR[i]))							// delete NonConvex
-					colorData[outIndex] = ColorManager.UNDEFINE;
+//				if(!(convexL[i] < outIndex && outIndex < convexR[i]))							// delete NonConvex
+//					colorData[outIndex] = ColorManager.UNDEFINE;
 				
+				if(i < cutTop)
+					colorData[outIndex] = ColorManager.BLACK;
+					
 				if(Math.pow((i-width/2 - cameraCentroidY),2) + Math.pow((j-height/2),2) > Math.pow(cameraRad,2))	// draw Circle
 					colorData[outIndex] = ColorManager.BLACK;
 				
@@ -211,14 +216,6 @@ public class Blob {
 				centroidX += curX;
 			}
 
-			// UP BREATH
-			if (curY > 0 && getPixel(curPos - dataWidth) == baseColor ){
-				qx[pixelCount] = curPos - dataWidth;
-				setPixel(curPos - dataWidth, (byte) ColorManager.UNDEFINE);
-				pixelCount++;
-				centroidX += curX;
-			}
-
 			// DOWN BREATH
 			if (curY + 1 < dataHeight && getPixel(curPos + dataWidth) == baseColor ){
 				qx[pixelCount] = curPos + dataWidth;
@@ -226,6 +223,15 @@ public class Blob {
 				pixelCount++;
 				centroidX += curX;
 			}
+			// UP BREATH
+			if (curY > 0 && getPixel(curPos - dataWidth) == baseColor ){
+				qx[pixelCount] = curPos - dataWidth;
+				setPixel(curPos - dataWidth, (byte) ColorManager.UNDEFINE);
+				pixelCount++;
+				centroidX += curX;
+			}
+		
+			
 		}
 		centroidX /= pixelCount;
 

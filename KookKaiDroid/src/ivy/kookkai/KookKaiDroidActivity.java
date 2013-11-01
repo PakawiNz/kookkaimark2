@@ -27,6 +27,8 @@ import android.widget.TextView;
 public class KookKaiDroidActivity extends Activity {
 	/** Called when the activity is first created. */
 
+	private static final boolean isACER = true;
+	
 	CameraInterface cameraInterface;
 	SensorInterface sensorInterface;
 	
@@ -78,7 +80,7 @@ public class KookKaiDroidActivity extends Activity {
 		final Button notSetGoalDirection = new Button(this);
 
 		setGoalDirection.setFocusable(false);
-		setGoalDirection.setText("Set Magnetic");
+		setGoalDirection.setText("Set Magnet");
 		setGoalDirection.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -89,7 +91,7 @@ public class KookKaiDroidActivity extends Activity {
 		});
 
 		notSetGoalDirection.setFocusable(false);
-		notSetGoalDirection.setText("Not Set Magnetic");
+		notSetGoalDirection.setText("Not Set Magnet");
 		notSetGoalDirection.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -113,8 +115,13 @@ public class KookKaiDroidActivity extends Activity {
 		drawColor.setFocusable(false);
 
 		LinearLayout leftVerticalLayout = new LinearLayout(this);
-		leftVerticalLayout.setLayoutParams(new LayoutParams(cameraInterface.frameHeight / 2,
-				cameraInterface.frameWidth * 2 / 3));
+		if(isACER){
+			leftVerticalLayout.setLayoutParams(new LayoutParams(cameraInterface.frameHeight / 6,
+					cameraInterface.frameWidth * 1 / 3));
+		}else{
+			leftVerticalLayout.setLayoutParams(new LayoutParams(cameraInterface.frameHeight / 2,
+					cameraInterface.frameWidth * 2 / 3));
+		}
 		leftVerticalLayout.setOrientation(LinearLayout.VERTICAL);
 		leftVerticalLayout.addView(notSetGoalDirection);
 		leftVerticalLayout.addView(setGoalDirection);
@@ -124,7 +131,11 @@ public class KookKaiDroidActivity extends Activity {
 		// Right Vertical Layout zone
 
 		LinearLayout rightVerticalLayout = new LinearLayout(this);
-		rightVerticalLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 350));
+		if(isACER){
+			rightVerticalLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 320));
+		}else{
+			rightVerticalLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 350));
+		}
 		rightVerticalLayout.setOrientation(LinearLayout.VERTICAL);
 		rightVerticalLayout.addView(cameraFrame);
 

@@ -154,13 +154,13 @@ public class MainlLoop implements Runnable {
 		outString += visionBlob.execute(y, cbcr, drawColorCheck.isChecked());
 		outString += mapBlob.execute();
 
-		for (int i = 0; i < GlobalVar.blobResult.size(); i++) {
-			if (GlobalVar.blobResult.get(i).tag == GlobalVar.BALL) {
-				debugImg.drawRect(GlobalVar.blobResult.get(i).posRect, Color.GREEN);
-			} else {
-				debugImg.drawRect(GlobalVar.blobResult.get(i).posRect, Color.WHITE);
-			}
-		}
+//		for (int i = 0; i < GlobalVar.blobResult.size(); i++) {
+//			if (GlobalVar.blobResult.get(i).tag == GlobalVar.BALL) {
+//				debugImg.drawRect(GlobalVar.blobResult.get(i).posRect, Color.GREEN);
+//			} else {
+//				debugImg.drawRect(GlobalVar.blobResult.get(i).posRect, Color.WHITE);
+//			}
+//		}
 		for (int i = 0; i < GlobalVar.mergeResult.size(); i++) {
 			if (GlobalVar.mergeResult.get(i).tag == GlobalVar.BALL) {
 				debugImg.drawRect(GlobalVar.mergeResult.get(i).posRect, Color.RED);

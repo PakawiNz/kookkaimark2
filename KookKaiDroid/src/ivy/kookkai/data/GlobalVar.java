@@ -39,7 +39,7 @@ public final class GlobalVar {
 	// ball size, enemy size are used, goal size not used
 	
 	public static double ballPos[] = new double[4];
-	public static double pillarPos[] = new double[4];
+	public static double polePos[] = new double[4];
 	
 	public static double goalPosL[] = new double[4];
 	public static double goalPosR[] = new double[4];
