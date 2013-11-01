@@ -1,4 +1,4 @@
-package kookkai.strategy;
+package ivy.kookkai.strategy;
 
 import android.util.Log;
 import ivy.kookkai.ai.PakawiNz_AI;
@@ -64,13 +64,14 @@ public class ChampStateFull implements StrategyTemplate {
 			lock(100);
 		}
 
-		if (ai.isStartFalling()) {
+		if (GlobalVar.isFalling) {
 			ai.startGettingUp();
+			return "FALLING ";
 		} else {
 			ai.resetFallCounter();
 		}
 
-		return "HOLY SHIT!!!  ";
+		return "PLAYING ";
 
 	}
 

@@ -1,23 +1,14 @@
 package ivy.kookkai.ai;
 
-//import android.util.Log;
-import kookkai.strategy.ChampStateFull;
-import kookkai.strategy.StrategyTemplate;
 import ivy.kookkai.ai.AITemplate;
 import ivy.kookkai.api.KookKaiAndroidAPI;
 import ivy.kookkai.data.GlobalVar;
+import ivy.kookkai.strategy.ChampStateFull;
+import ivy.kookkai.strategy.StrategyTemplate;
 
-public class PakawiNz_AI extends FetchBall implements AITemplate {
-	private int state = 0;
-	
-	private double falldownThreashold = 150.0;
-	private double fallCounter = 0;
-	private double getupThreashold = 10.0;
-	private double _ax = 0.3, _ay = 9.5, _az = 4.8;
-	private double dax;
-	private double day;
-	private double daz;
-	private double difAccel;
+public class PakawiNz_AI implements AITemplate {
+
+	private double fallCounter = 0;	
 	
 	private StrategyTemplate strategy;
 	public KookKaiAndroidAPI api;
@@ -25,7 +16,6 @@ public class PakawiNz_AI extends FetchBall implements AITemplate {
 	private String out = "";
 	
 	public PakawiNz_AI(KookKaiAndroidAPI api) {
-		super(api);
 		this.api = api;
 		this.strategy = new ChampStateFull(this);
 	}
@@ -199,7 +189,7 @@ public class PakawiNz_AI extends FetchBall implements AITemplate {
 			}else if(goalState == onRIGHT){
 				slideLeft();
 			} else {
-				if(GlobalVar.isGoalDirection()){
+				if(GlobalVar.isCorrectDirection()){
 					return 1;
 				}else{
 					return -1;
@@ -246,48 +236,32 @@ public class PakawiNz_AI extends FetchBall implements AITemplate {
 	public void startGettingUp() {
 		// if robot is detected in falldown stage in a period of time will
 		// call stand up motion.
+		out += "Getting Up!!\n";
 		if (fallCounter < 7)
 			fallCounter++;// original = 20
 		else {
 			if (GlobalVar.ay < 0) { // stand up from front-down position.
 				api.playSaveMotion(1); // flip
 				api.playSaveMotion(0); // stand up
-				state = -100;
 			} else { // stand up from back-down position.
 				api.playSaveMotion(0); // stand up
-				state = -60;
 			}
 			fallCounter = 0;
 		}	
-	}
-	
-	public void gettingUp() {
-		if (state < -20 && difAccel < getupThreashold) {
-			state = -20;
-		}
-		state++;
 	}
 
 	public void resetFallCounter() {
 		fallCounter = 0;
 	}
-	public boolean isFalling() {
-		return state < 0;
-	}
-	
-	public boolean isStartFalling() {
-		return difAccel > falldownThreashold;
-	}
 
+	//-------------------------------->> CONTROL <<--------------------------------//
+	
 	public void forceReady() {
 		api.ready();
 	}
 	
 	public String execute() {
-		dax = GlobalVar.ax - _ax;
-		day = GlobalVar.ay - _ay;
-		daz = GlobalVar.az - _az;
-		difAccel = dax * dax + day * day + daz * daz;
+		
 		out = "";
 		out += "\n";
 		out += "GOAL L POSITION" + GlobalVar.goalPosL[0] + "\n";
@@ -295,7 +269,8 @@ public class PakawiNz_AI extends FetchBall implements AITemplate {
 		out += "GOAL R POSITION" + GlobalVar.goalPosR[0] + "\n";
 		out += "GOAL R Y" + GlobalVar.goalPosR[1] + "\n";
 		out += "BALL POSITION" + GlobalVar.ballPos[0] + "\n";
-		out += "BALL Y" + GlobalVar.ballPos[1] + "\n";
+		out += "BALL Y " + GlobalVar.ballPos[1] + "\n";
+		out += "BALL SIZE " + GlobalVar.ballPos[2] + "\n";
 		out += "\n";
 		String x =  strategy.run();
 		

@@ -1,9 +1,9 @@
 package ivy.kookkai.ai;
 
-import kookkai.strategy.FetcherSinglePeaceful;
-import kookkai.strategy.StrategyTemplate;
 import ivy.kookkai.api.KookKaiAndroidAPI;
 import ivy.kookkai.data.GlobalVar;
+import ivy.kookkai.strategy.FetcherSinglePeaceful;
+import ivy.kookkai.strategy.StrategyTemplate;
 
 public class FetchBall implements AITemplate {
 	private int state = 0;

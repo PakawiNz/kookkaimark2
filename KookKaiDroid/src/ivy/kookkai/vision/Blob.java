@@ -9,14 +9,16 @@ import android.util.Log;
 
 public class Blob {
 	
-	private static final boolean fillDark = true;
-	private static final boolean strictAdjacent = false;
-	private static final int jumpAllowance = 120;
+	private static final int jumpAllowance = 60;
 	private static final int minimumGreen = 20;
+	
+	private static final int cameraCentroidY = 10;
+	private static final int cameraRad = 140;
 	
 	private int width, height;
 	private final int qx[] = new int[86400];
 	private byte[] colorData;
+	private byte[] circleMask;
 	private byte[] yImg;
 	private byte[] img;
 	private DebugImgView debugImg;
@@ -28,33 +30,33 @@ public class Blob {
 	public int dataWidth;
 	public int dataHeight;
 	String out = "";
-
-	public Blob() {
+	
+	public Blob(){
 		
+	}
+	
+	public Blob(int w, int h,DebugImgView dView){
+		colorData = new byte[w * h];
+		convexL = new int[w];
+		convexR = new int[w];
+		debugImg = dView;
+		width = w;
+		height = h;
+		dataHeight = w;
+		dataWidth = h;
 	}
 	
 	public byte[] getColorData() {
 		return colorData;
 	}
 
-	public String execute(byte[] brightness, byte[] cbcrImg, int w, int h,
-			DebugImgView dView, boolean drawColor) {
+	public String execute(byte[] brightness, byte[] cbcrImg,  boolean drawColor) {
 		out = "";
-		if (colorData == null || colorData.length != cbcrImg.length / 2) {
-			colorData = new byte[cbcrImg.length / 2];
-			convexL = new int[w];
-			convexR = new int[w];
-		}
+
 		yImg = brightness;
 		img = cbcrImg;
-		debugImg = dView;
-		width = w;
-		height = h;
 		drawcolor = drawColor;
-
-		dataHeight = w;
-		dataWidth = h;
-
+		
 		threshold();
 		drawColor();
 		findBlob();
@@ -74,6 +76,7 @@ public class Blob {
 		int firstGreen;
 		int lastGreen;
 		int greenCount;
+		int nonGreenCount;
 
 		int w2 = width * 2;
 		int w4 = width * 4;
@@ -82,6 +85,7 @@ public class Blob {
 			firstGreen = 0;
 			lastGreen = 0;
 			greenCount = 0;
+			nonGreenCount = 0;
 			
 			convexL[i] = 0;
 			convexR[i] = 0;
@@ -101,10 +105,14 @@ public class Blob {
 				/** CONVEX HULL MAKING [SPEED OPTIMIZE]*/
 				
 				if(colorData[outIndex] == ColorManager.GREEN){
-					if(firstGreen == 0)
+					if(firstGreen == 0 || nonGreenCount > jumpAllowance)
 						firstGreen = outIndex;
 					lastGreen = outIndex;
 					greenCount++;
+					nonGreenCount = 0;
+				}else if (colorData[outIndex] == ColorManager.UNDEFINE || 
+						  colorData[outIndex] == ColorManager.WHITE ){
+					nonGreenCount++;
 				}
 			}
 			
@@ -115,79 +123,19 @@ public class Blob {
 		}
 	}
 
-/*	private void thresholdWithDarkGreen() {
-
-		int outIndex = 0;
-		int y, cr, cb;
-		int i, j, k;
-		
-		boolean foundGreen;		
-		boolean foundDarkGreen;	
-		int firstDarkgreen = 0;
-		
-		int w2 = width * 2;
-		int w4 = width * 4;
-		for (i = 0; i < width; i++) {
-			foundGreen = false;
-			foundDarkGreen = false;
-			convexL[i] = outIndex + height;
-			convexR[i] = outIndex;
-			for (j = i * 2 + w2 * (height - 1), k = i * 2 + w4 * (height - 1); j >= 0; j -= w2, k -= w4, outIndex++) {
-				cr = (int) img[j] & 0xff;
-				cb = (int) img[j + 1] & 0xff;
-				y = (int) yImg[k] & 0xff;
-
-				if (y > ColorManager.WHITE_THRESHOLD)
-					colorData[outIndex] = ColorManager.WHITE;
-				else if (y < ColorManager.BLACK_THRESHOLD)
-					colorData[outIndex] = ColorManager.BLACK;
-				else 
-					colorData[outIndex] = ColorManager.crcbHashMap[cr][cb];
-				
-				*//** CONVEX HULL MAKING [SPEED OPTIMIZE]*//*
-				
-				if(colorData[outIndex] == ColorManager.DARKGREEN){	// this is darkgreen
-					if(!foundDarkGreen) {								// this is the first darkgreen
-						firstDarkgreen = outIndex;
-						foundDarkGreen = true;
-					}
-					if(foundGreen){		
-						if(strictAdjacent && outIndex - convexR[i] > jumpAllowance);	// this adjacent to green
-						else convexR[i] = outIndex;
-						colorData[outIndex] = ColorManager.GREEN;
-					}
-				} else {
-					if(colorData[outIndex] == ColorManager.GREEN){	// this is green
-						if(!foundGreen) {								// this is the firstgreen
-							if(foundDarkGreen) {							// have some darkgreen adjacent to this
-								convexL[i] = firstDarkgreen;		
-								for(int a = firstDarkgreen; a < outIndex ; a++){
-									colorData[a] = ColorManager.GREEN;
-								}
-							} else {
-								convexL[i] = outIndex;
-							}
-							foundGreen = true;
-						}
-						convexR[i] = outIndex;
-					}else {
-						if(strictAdjacent && outIndex - firstDarkgreen > jumpAllowance)
-							foundDarkGreen = false;
-					}
-				}
-			}
-		}
-	}*/
-	
 	private void drawColor(){
 		// can't move to debugImgView coz vision blob will execute painting
-		
 		int outIndex = 0;
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++, outIndex++) {
-				if(!(convexL[i] < outIndex && outIndex < convexR[i]))
+				
+				if(!(convexL[i] < outIndex && outIndex < convexR[i]))							// delete NonConvex
+					colorData[outIndex] = ColorManager.UNDEFINE;
+				
+				if(Math.pow((i-width/2 - cameraCentroidY),2) + Math.pow((j-height/2),2) > Math.pow(cameraRad,2))	// draw Circle
 					colorData[outIndex] = ColorManager.BLACK;
-				if (drawcolor) 
+				
+				if (drawcolor) 																	// draw all Circle
 					debugImg.drawPixel(j, i, ColorManager.rColor[colorData[outIndex]]);
 			}
 		}
@@ -362,17 +310,6 @@ public class Blob {
 					/ (a.centroidX + b.centroidX);
 		a.pixelCount += b.pixelCount;
 
-	}
-
-	private void filterNoise(ArrayList<BlobObject> list) {
-		int threshold = (int) (0.25 * GlobalVar.frameHeight);
-		for (int i = 0; i < list.size(); i++) {
-			BlobObject b = list.get(i);
-			if (b.posRect.bottom < threshold) {
-				list.remove(i);
-				i--;
-			}
-		}
 	}
 
 	private byte getPixel(int pos) {

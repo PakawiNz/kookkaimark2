@@ -23,10 +23,6 @@ public final class GlobalVar {
 	public static final int FRAME_HEIGHT = 640;
 	public static final int FRAME_WIDTH = 480;
 	
-	public static float GOAL_DIRECTION = (float) (-1.2);// range from -PI
-	
-	public static final float HEADING_ERROR_RANGE = (float) Math.PI * 7 / 16;
-	
 	public static final double cameraFocalLength = 20;
 
 	public static final int oppTeamColor = MAGENTA_BLOB;
@@ -51,35 +47,6 @@ public final class GlobalVar {
 
 	public static float heading = 0;// range from -PI to PI
 									// to PI!!
-	
-	public static void setHeading(float heading) {
-		float h = heading;
-		while(h>Math.PI) h-=2*(float)Math.PI;
-		while(h<Math.PI) h+=2*(float)Math.PI;
-		GlobalVar.heading = heading;
-	}
-
-	public static boolean isGoalDirection() {
-		// NOTE Manual GOAL_DIRECTION adjust at second half
-		float error = heading - GOAL_DIRECTION;
-		if (error >= 0) {
-			if (error <= HEADING_ERROR_RANGE) {
-				return true;
-			}
-			if (2 * Math.PI - error <= HEADING_ERROR_RANGE) {
-				return true;
-			}
-		} else {
-			if (-HEADING_ERROR_RANGE < error) {
-				return true;
-			}
-			if (2 * Math.PI + error <= HEADING_ERROR_RANGE) {
-				return true;
-			}
-		}
-		return false;
-
-	}
 
 	public static JoystickData joyData = new JoystickData();
 
@@ -87,8 +54,9 @@ public final class GlobalVar {
 	public static int frameHeight;
 
 	public static GameData gameData;
-
-	public static double ax, ay, az;
+	
+	public static boolean isFalling;
+	public static boolean isGoalDirection;
 
 	public static void initVar() {
 		GlobalVar.blobResult = new ArrayList<BlobObject>();

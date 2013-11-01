@@ -9,6 +9,10 @@ public class BlobAnalyser {
 	
 	private static final double filterRatio = 0.2;
 	
+	public BlobAnalyser(){
+		
+	}
+	
 	public String execute(){
 		GlobalVar.ballPos[2] = -1;
 		GlobalVar.goalPosL[2] = -1;
@@ -70,6 +74,7 @@ public class BlobAnalyser {
 				GlobalVar.goalPosR[1] = GlobalVar.frameHeight - blob1.posRect.bottom;
 				GlobalVar.goalPosR[2] = blob1.getSize();
 			}
+			
 		}else if(goals.size() == 0){
 			if(GlobalVar.goalPosL[0] < -80 && GlobalVar.goalPosR[0] < -80){
 				GlobalVar.goalPosL[0] = 0;
