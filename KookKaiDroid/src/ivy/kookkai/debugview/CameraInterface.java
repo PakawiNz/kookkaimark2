@@ -39,7 +39,7 @@ public class CameraInterface extends SurfaceView implements SurfaceHolder.Callba
 
 		mCamera = Camera.open();
 		Camera.Parameters para = mCamera.getParameters();
-		this.previewformat = para.getPreviewFormat();
+		CameraInterface.previewformat = para.getPreviewFormat();
 		
 		
 //		para.setAutoExposureLock(true);

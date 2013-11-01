@@ -2,6 +2,7 @@ package ivy.kookkai.data;
 
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class ColorPlate implements Serializable {
 	public int tag;
 	public int color;
