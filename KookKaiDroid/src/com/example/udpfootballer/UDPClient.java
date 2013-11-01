@@ -68,7 +68,7 @@ public class UDPClient implements Runnable {
 	}
 
 	public void sendMessage(byte[] bytes) {
-		Log.d("client_sendMessage", "BYTE = " + MessageBundle.byteToString(bytes[2]) + ", " + MessageBundle.byteToString(bytes[1]) + ", " + MessageBundle.byteToString(bytes[0]));
+		//Log.d("client_sendMessage", "BYTE = " + MessageBundle.byteToString(bytes[2]) + ", " + MessageBundle.byteToString(bytes[1]) + ", " + MessageBundle.byteToString(bytes[0]));
 		try {
 			if(this.isRunning) {
 				this.isRunning = false;
