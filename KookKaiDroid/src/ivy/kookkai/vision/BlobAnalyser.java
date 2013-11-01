@@ -13,6 +13,7 @@ public class BlobAnalyser {
 		GlobalVar.ballPos[2] = -1;
 		GlobalVar.goalPosL[2] = -1;
 		GlobalVar.goalPosR[2] = -1;
+		GlobalVar.polePos[2] = -1;
 		
 		ArrayList<BlobObject> goals = new ArrayList<BlobObject>();
 		BlobObject blob;
@@ -31,17 +32,19 @@ public class BlobAnalyser {
 			}
 		}
 		
-		blob = goals.get(goals.size() - 1);
-		for (BlobObject b : goals){
-			if(b.posRect.bottom > blob.posRect.bottom){
-				blob = b;
+		if(goals.size() != 0) {
+			blob = goals.get(goals.size() - 1);
+			for (BlobObject b : goals){
+				if(b.posRect.bottom > blob.posRect.bottom){
+					blob = b;
+				}
 			}
+			GlobalVar.polePos[0] = blob.posRect.centerX() - GlobalVar.frameWidth / 2;
+			GlobalVar.polePos[1] = GlobalVar.frameHeight - blob.posRect.bottom;
+			GlobalVar.polePos[2] = blob.getSize();
 		}
 		
-		GlobalVar.pillarPos[0] = blob.posRect.centerX() - GlobalVar.frameWidth / 2;
-		GlobalVar.pillarPos[1] = GlobalVar.frameHeight - blob.posRect.bottom;
-		GlobalVar.pillarPos[2] = blob.getSize();
-		
+
 		if(goals.size() > 0){
 			int minimumFragmentSize = (int)(filterRatio * goals.get(goals.size()-1).getSize());
 			while(goals.get(0).getSize() < minimumFragmentSize){
